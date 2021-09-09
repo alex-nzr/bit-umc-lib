@@ -1,10 +1,10 @@
 {
-    "name": "alex-nzr/bit-umc-appointment",
+    "name": "alex-nzr/bit-umc-integration",
     "description": "Library to integrate website and 1C bit-umc",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "AlexNzr\\BitUmcAppointment\\": "src/"
+            "AlexNzr\\BitUmcIntegration\\": "src/"
         }
     },
     "authors": [
@@ -13,5 +13,9 @@
             "email": "jc1988x@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    }
 }

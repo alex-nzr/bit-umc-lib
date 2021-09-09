@@ -1,3 +1,19 @@
+<?php
+
+if (is_file(realpath('../vendor/autoload.php')))
+{
+    require_once(realpath('../vendor/autoload.php'));
+}
+else{ die("appointment library not found"); }
+
+use AlexNzr\BitUmcIntegration\RequestController;
+
+$data = file_get_contents('php://input');
+if (!empty($data)){
+    echo RequestController::sendRequest((array)$data);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -57,6 +73,15 @@
         <button type="submit" id="create_order" class="appointment-form_button">Записаться на приём</button>
     </div>
 </div>-->
+
+<form action="" method="post">
+    <input type="text" name="name"/>
+    <input type="text" name="surname"/>
+    <input type="text" name="phone"/>
+    <input type="email" name="email"/>
+    <input type="text" name="methodName">
+    <button>send</button>
+</form>
 <pre>
     <?
     //$res = send("GetListClients");
@@ -79,7 +104,7 @@
         "email" => "example@mail.ru",
         "comment" => urlencode("some comment text"),
     ]);
-    $res = send("CreateOrder", $params);
+    //$res = send("CreateOrder", $params);
     print_r($res);
     ?>
 </pre>
