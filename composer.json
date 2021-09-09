@@ -1,6 +1,6 @@
 {
     "name": "alex-nzr/bit-umc-appointment",
-    "description": "Appointment api for bit-umc",
+    "description": "Library to integrate website and 1C bit-umc",
     "type": "library",
     "autoload": {
         "psr-4": {
@@ -13,7 +13,5 @@
             "email": "jc1988x@gmail.com"
         }
     ],
-    "require": {
-        "php": ">=7.4"
-    }
+    "require": {}
 }
