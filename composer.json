@@ -1,0 +1,17 @@
+{
+    "name": "emc/bit-umc-appointment",
+    "description": "Appointment api for bit-umc",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Emc\\BitUmcAppointment\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexey Nazarov",
+            "email": "jc1988x@gmail.com"
+        }
+    ],
+    "require": {}
+}
