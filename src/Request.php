@@ -1,5 +1,5 @@
 <?
-namespace Emc\BitUmcAppointment;
+namespace AlexNzr\BitUmcAppointment;
 
 class Request{
 	

@@ -1,6 +1,6 @@
 <?
 
-namespace Emc\BitUmcAppointment;
+namespace AlexNzr\BitUmcAppointment;
 
 /**
  * 

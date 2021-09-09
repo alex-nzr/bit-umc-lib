@@ -1,10 +1,10 @@
 {
-    "name": "emc/bit-umc-appointment",
+    "name": "alex-nzr/bit-umc-appointment",
     "description": "Appointment api for bit-umc",
     "type": "library",
     "autoload": {
         "psr-4": {
-            "Emc\\BitUmcAppointment\\": "src/"
+            "AlexNzr\\BitUmcAppointment\\": "src/"
         }
     },
     "authors": [
@@ -13,5 +13,7 @@
             "email": "jc1988x@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "php": ">=7.4"
+    }
 }
