@@ -1,20 +1,22 @@
 <?php
 namespace AlexNzr\BitUmcIntegration;
 
-use AlexNzr\BitUmcIntegration\RequestService;
-
 class RequestController{
 
     protected function __construct(){}
 
-    public static function sendRequest(array $data)
+    /** checks the name of action and calls the relevant service
+     * @param array $data
+     * @return string
+     */
+    public static function sendRequest(array $data): string
     {
-
-        if (!empty($data['methodName']))
+        $data = Utils::cleanRequestData($data);
+        if (!empty($data['action']))
         {
-            $method = trim(strip_tags(htmlspecialchars($_POST['methodName'])));
+            $action = $data['action'];
 
-            switch ($method) {
+            switch ($action) {
                 case 'GetListClients':
                     $response = RequestService::getListClients();
                     break;
@@ -25,21 +27,20 @@ class RequestController{
                     $response = RequestService::getListEmployees();
                     break;
                 case 'GetSchedule':
-                    $response = RequestService::getSchedule($data);
+                    $response = RequestService::getSchedule();
                     break;
                 case 'CreateOrder':
                     $response = RequestService::createOrder($data);
                     break;
                 default:
-                    $response = json_encode(['error' => 'Unknown api method - '.$method]);
+                    $response = Utils::addError('Unknown action - '.$action);
                     break;
             }
-
             return $response;
         }
         else
         {
-            return json_encode(['error' => 'Api method is empty']);
+            return Utils::addError('Action is empty');
         }
     }
 }

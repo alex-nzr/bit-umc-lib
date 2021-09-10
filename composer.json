@@ -1,6 +1,6 @@
 {
     "name": "alex-nzr/bit-umc-integration",
-    "description": "Library to integrate website and 1C bit-umc",
+    "description": "Library to integrate website with 1C BitUmc",
     "type": "library",
     "autoload": {
         "psr-4": {
@@ -15,7 +15,7 @@
     ],
     "require": {
         "php": ">=7.4.0",
-        "ext-curl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-curl": "*"
     }
 }

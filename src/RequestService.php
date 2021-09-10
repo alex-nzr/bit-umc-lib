@@ -1,88 +1,116 @@
-<?
+<?php
 namespace AlexNzr\BitUmcIntegration;
 
 class RequestService{
 	
-	private static string $baseurl = Variables::PROTOCOL .
-                                     Variables::AUTHDATA .
-                                     Variables::BASE_IP .
-                                     Variables::BASE_NAME .
-                                     Variables::HTTP_SERVICE_PREFIX .
-                                     Variables::HTTP_SERVICE_NAME .
-                                     Variables::HTTP_SERVICE_VERSION;
-	
+	private static string $baseurl = Variables::PROTOCOL . Variables::COLON . Variables::D_SEP .
+                                     Variables::BASE_ADDR . Variables::SEP .
+                                     Variables::BASE_NAME . Variables::SEP .
+                                     Variables::HTTP_SERVICE_PREFIX . Variables::SEP .
+                                     Variables::HTTP_SERVICE_NAME . Variables::SEP .
+                                     Variables::HTTP_SERVICE_API_VERSION . Variables::SEP;
+
 	protected function __construct(){}
 
+    /** get list of clients in json
+     * @return string
+     */
     public static function getListClients(): string
     {
         return self::post("GetListClients");
     }
 
+    /** get list of clinics in json
+     * @return string
+     */
     public static function getListClinics(): string
     {
         return self::post("GetListClinics");
     }
 
+    /** get list of employees in json
+     * @return string
+     */
     public static function getListEmployees(): string
     {
         return self::post("GetListEmployees");
     }
 
-    public static function getSchedule($params): string
+    /** get doctor's or cabinet's schedule in json
+     * @return string
+     */
+    public static function getSchedule(): string
     {
-        if (isset($params['startDate'], $params['finishDate']))
+        $period = Utils::getDateInterval(Variables::SCHEDULE_PERIOD_IN_DAYS);
+        return self::post('GetSchedule', $period);
+    }
+
+    /** make request to creating order
+     * @param array $params
+     * @return string
+     */
+    public static function createOrder(array $params): string
+    {
+        if (Utils::validateOrderParams($params))
         {
-            $params = urlencode(json_encode($params));
-            return self::post('GetSchedule', $params);
+            $params['orderDate'] = Utils::formatDateToOrder($params['orderDate']);
+            $params['timeBegin'] = Utils::formatDateToOrder($params['timeBegin'], true);
+            $params['timeEnd'] = Utils::formatDateToOrder($params['timeEnd'], true);
+            return self::post('CreateOrder', $params);
         }
-
-        return json_encode(array('error' => 'Missing params to load schedule'));
+        return Utils::addError('Not enough params to make appointment');
     }
 
-    public static function createOrder($params): string
+    /** make request to 1C database
+     * @param string $method
+     * @param array $params
+     * @return string
+     */
+	protected static function post(string $method, array $params = []): string
     {
-        if (isset($_POST['doctorUID'],$_POST['surname'],$_POST['name'],$_POST['middleName'],$_POST['orderDate'],$_POST['timeBegin'],$_POST['timeEnd'],$_POST['phone'],$_POST['clinicGUID'])){
-            $arParams['clinicGUID'] = strip_tags(htmlspecialchars($_POST['clinicGUID']));
-            $arParams['doctorUID']  = strip_tags(htmlspecialchars($_POST['doctorUID']));
-            $arParams['surname']    = urlencode(strip_tags(htmlspecialchars($_POST['surname'])));
-            $arParams['name']       = urlencode(strip_tags(htmlspecialchars($_POST['name'])));
-            $arParams['middleName'] = urlencode(strip_tags(htmlspecialchars($_POST['middleName'])));
-            $arParams['orderDate']  = strip_tags(htmlspecialchars($_POST['orderDate']));
-            $arParams['timeBegin']  = strip_tags(htmlspecialchars($_POST['timeBegin']));
-            $arParams['timeEnd']    = strip_tags(htmlspecialchars($_POST['timeEnd']));
-            $arParams['phone']      = strip_tags(htmlspecialchars($_POST['phone']));
-            $arParams['email']    = urlencode(strip_tags(htmlspecialchars($_POST['email'])));
-            $arParams['comment']    = urlencode(strip_tags(htmlspecialchars($_POST['comment'])));
+		$requestUrl = self::$baseurl . $method;
 
-            $params = urlencode(json_encode($params));
-            RequestService::post($method, $params);
-        }
-    }
+        if($curl = curl_init())
+        {
+            $authToken = base64_encode(Variables::AUTH_LOGIN.Variables::COLON.Variables::AUTH_PASSWORD);
+            $headers = array(
+                "Accept: application/json",
+                "Authorization: Basic " . $authToken,
+                "Content-Type: application/json;charset=utf-8",
+            );
 
-	protected static function post(string $method, string $params = 'no_data'): string
-    {
-		$requestUrl = self::$baseurl . $method . '/';
+            $postData = json_encode($params);
 
-        if($curl = curl_init()) {
-            curl_setopt($curl, CURLOPT_URL, $requestUrl . $params);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, null);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type:application/json;charset=utf-8'));
-            $response = curl_exec($curl);
-            curl_close($curl);
+            try
+            {
+                curl_setopt($curl, CURLOPT_URL, $requestUrl);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+                $response = curl_exec($curl);
+                curl_close($curl);
 
-            if (self::isJSON($response)) {
-                return $response;
+                if (self::isJSON($response)) {
+                    return $response;
+                }
+                else{
+                    return Utils::addError("Unexpected response - " . $response);
+                }
             }
-            else{
-                return json_encode(array('error' => $response));
+            catch (\Exception $e)
+            {
+                return Utils::addError($e->getMessage());
             }
         }else{
-            return json_encode(array('error' => 'Curl init error'));
+            return Utils::addError('Curl init error');
         }
 	}
 
+    /** checking the validity of the json
+     * @param $string
+     * @return bool
+     */
 	private static function isJSON($string): bool
     {
 	    return is_string($string) && (is_object(json_decode($string)) || is_array(json_decode($string, true)));

@@ -4,13 +4,12 @@ if (is_file(realpath('../vendor/autoload.php')))
 {
     require_once(realpath('../vendor/autoload.php'));
 }
-else{ die("appointment library not found"); }
+else{ die("integration library not found"); }
 
 use AlexNzr\BitUmcIntegration\RequestController;
 
-$data = file_get_contents('php://input');
-if (!empty($data)){
-    echo RequestController::sendRequest((array)$data);
+if (!empty($_POST["action"])){
+    print_r(RequestController::sendRequest($_POST));
 }
 ?>
 
@@ -21,9 +20,7 @@ if (!empty($data)){
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Medical appointment page</title>
-    <link rel="stylesheet" href="css/style.css?<?=time()?>">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css?<?=filemtime(realpath('./css/style.css'))?>">
 </head>
 
 <body>
@@ -75,68 +72,29 @@ if (!empty($data)){
 </div>-->
 
 <form action="" method="post">
-    <input type="text" name="name"/>
-    <input type="text" name="surname"/>
-    <input type="text" name="phone"/>
-    <input type="email" name="email"/>
-    <input type="text" name="methodName">
+    <input type="text" name="clinicGUID" placeholder="clinicGUID" value="4c68deb4-22c3-11df-8618-002618dcef2c">
+    <input type="text" name="refUID" placeholder="refUID" value="ac30e13a-3087-11dc-8594-005056c00008">
+    <br>
+    <input type="text" name="surname" placeholder="surname" value="bot">
+    <input type="text" name="middleName" placeholder="middleName" value="bot">
+    <input type="text" name="name" placeholder="name" value="bot">
+    <br>
+    <input type="text" name="orderDate" placeholder="orderDate" value="20210913">
+    <input type="text" name="timeBegin" placeholder="timeBegin" value="2021-09-13T18:30:00">
+    <input type="text" name="timeEnd" placeholder="timeEnd" value="2021-09-13T21:00:00">
+    <br>
+    <input type="text" name="phone" placeholder="phone" value="8 (999) 666-55-11">
+    <input type="email" name="email" placeholder="email" value="bot@1cbit.ru">
+    <input type="text" name="comment" placeholder="comment" value="Lorem ipsum dastard">
+    <input type="text" name="address" placeholder="address" value="Street and home">
+    <br>
+    <input type="text" name="action" placeholder="action name" value="CreateOrder">
     <button>send</button>
 </form>
-<pre>
-    <?
-    //$res = send("GetListClients");
-    //$res = send("GetListClinics");
-    //$res = send("GetListEmployees");
-
-    $params = json_encode([ "startDate" => time(), "finishDate" => time() + 60*60*24*30]);
-    //$res = send("GetSchedule", $params);
-
-    $params = json_encode([
-        "clinicGUID" => "4c68deb4-22c3-11df-8618-002618dcef2c",
-        "doctorUID" => "ac30e13a-3087-11dc-8594-005056c00008",
-        "surname" => urlencode("Nzr"),
-        "middleName" => urlencode("JC"),
-        "name" => urlencode("Alex"),
-        "orderDate" => "20210902",
-        "timeBegin" => date("YmdHis", strtotime("2021-09-02T18:30:00")),
-        "timeEnd" => date("YmdHis", strtotime("2021-09-02T21:00:00")),
-        "phone" => "+79991234567",
-        "email" => "example@mail.ru",
-        "comment" => urlencode("some comment text"),
-    ]);
-    //$res = send("CreateOrder", $params);
-    print_r($res);
-    ?>
-</pre>
 
 <div class="appointment-result-wrapper">
     <p id="appointment-result"></p>
 </div>
 
-<script src="js/script.js"></script>
-
 </body>
 </html>
-<?
-function send($method, $params = "sas"){
-    $headers = array(
-        "Accept: application/json",
-        "Authorization: Basic " . base64_encode("siteIntegration:123456"),
-        "Content-Type: application/json;charset=utf-8",
-    );
-    $url = "http://localhost:3500/umc_corp/hs/siteIntegration/V1/";
-    if($curl = curl_init()) {
-        curl_setopt($curl, CURLOPT_URL, $url.$method."/".$params);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, null);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        $response = curl_exec($curl);
-        curl_close($curl);
-
-        return $response;
-    }else{
-        echo 'Curl init error';
-    }
-}
-?>
