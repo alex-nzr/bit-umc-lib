@@ -108,4 +108,61 @@ class Utils{
     {
         return json_encode(["error" => $message]);
     }
+
+    /** prints message
+     * @param $message
+     */
+    public static function print($message): void
+    {
+        echo "<pre>";
+        print_r($message);
+        echo "</pre>";
+    }
+
+    /** Tests if an array is associative or not.
+     * @param array array to check
+     * @return boolean
+     */
+    public static function is_assoc(array $array): bool
+    {
+        if (!is_array($array)){
+            return false;
+        }
+
+        // Keys of the array
+        $keys = array_keys($array);
+        // If the array keys of the keys match the keys, then the array must
+        // not be associative (e.g. the keys array looked like {0:0, 1:1...}).
+        return array_keys($keys) !== $keys;
+    }
+
+    /** Beautify array of timelines
+     * @param mixed array
+     * @return array
+     */
+    public static function formatTimetable($array): array
+    {
+        if (!is_array($array) || empty($array)){
+            return [];
+        }
+
+        if (!empty($array)){
+            if (self::is_assoc($array)) {
+                $array = array($array);
+            }
+            $formattedArray = [];
+            foreach ($array as $item) {
+                $formattedArray[] = [
+                    "typeOfTimeUid" => $item["ВидВремени"],
+                    "date" => $item["Дата"],
+                    "timeBegin" => $item["ВремяНачала"],
+                    "timeEnd" => $item["ВремяОкончания"],
+                    "formattedDate" => date("d-m-Y", strtotime($item["Дата"])),
+                    "formattedTimeBegin" => date("H:i", strtotime($item["ВремяНачала"])),
+                    "formattedTimeEnd" => date("H:i", strtotime($item["ВремяОкончания"])),
+                ];
+            }
+            return $formattedArray;
+        }
+    }
 }

@@ -12,7 +12,7 @@ class RequestController{
     public static function sendRequest(array $data): string
     {
         $data = Utils::cleanRequestData($data);
-        if (!empty($data['action']))
+        if (is_array($data) && !empty($data['action']))
         {
             $action = $data['action'];
 
@@ -29,8 +29,17 @@ class RequestController{
                 case 'GetSchedule':
                     $response = RequestService::getSchedule();
                     break;
+                case 'GetListOrders':
+                    $response = RequestService::getListOrders($data);
+                    break;
                 case 'CreateOrder':
                     $response = RequestService::createOrder($data);
+                    break;
+                case 'CreateOrderUnauthorized':
+                    $response = RequestService::createOrder($data, true);
+                    break;
+                case "CancelOrder":
+                    $response = RequestService::cancelOrder($data);
                     break;
                 default:
                     $response = Utils::addError('Unknown action - '.$action);

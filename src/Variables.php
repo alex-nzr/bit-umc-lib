@@ -20,7 +20,7 @@ class Variables
 	const SCHEDULE_PERIOD_IN_DAYS = 30;
 
 	const REQUIRED_ORDER_PARAMS = [
-        'refUID',
+        'refUid',
         'surname',
         'name',
         'middleName',
@@ -28,8 +28,14 @@ class Variables
         'timeBegin',
         'timeEnd',
         'phone',
-        'clinicGUID'
+        'clinicUid'
     ];
+
+	const UNAUTHORIZED_USER_NAME = "|";
+    const UNAUTHORIZED_USER_MIDDLE_NAME = "|";
+    const UNAUTHORIZED_USER_SURNAME = "Запись с сайта";
+    const UNAUTHORIZED_USER_PHONE = "+70000000000";
+    const UNAUTHORIZED_USER_UID = "84291ec6-161a-11ec-9bc2-c03eba27318f";
 
 	const SEP = '/';
     const D_SEP = '//';
