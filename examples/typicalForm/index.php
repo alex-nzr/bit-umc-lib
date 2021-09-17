@@ -12,7 +12,7 @@ use AlexNzr\BitUmcIntegration\Utils;
 $clientUid = "84291ec6-161a-11ec-9bc2-c03eba27318f";
 //Utils::print(json_decode(RequestController::sendRequest(["action" => "GetListOrders", "clientUid"=>$clientUid]), true));
 //$_POST["orderUid"] = "9f51657e-16dd-11ec-9bc2-c03eba27318f";
-Utils::print(json_decode(RequestController::sendRequest(["action" => "CancelOrder", "orderUid"=>"9f51657e-16dd-11ec-9bc2-c03eba27318f", "reason" => "Important reason"]), true));
+//Utils::print(json_decode(RequestController::sendRequest(["action" => "CancelOrder", "orderUid"=>"9f51657e-16dd-11ec-9bc2-c03eba27318f", "reason" => "Important reason"]), true));
 
 $resText = '';
 $errText = [];
