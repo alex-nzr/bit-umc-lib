@@ -20,7 +20,7 @@ composer require alex-nzr/bit-umc-integration
 
 ### Direct download
 
-Download [latest version](https://github.com/unitpay/php-sdk/archive/master.zip), unzip and copy to your project folder.
+Download [latest version](https://github.com/alex-nzr/bit-umc-lib/archive/refs/heads/master.zip), unzip and copy to your project folder.
 
 ## Contributing ##
 
