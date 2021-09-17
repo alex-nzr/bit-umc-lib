@@ -47,6 +47,7 @@ class RequestController{
                         $response = Utils::addError('Unknown action - '.$action);
                         break;
                 }
+
                 return $response;
             }
             else

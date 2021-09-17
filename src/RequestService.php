@@ -254,7 +254,7 @@ class RequestService{
         }
     }
 
-    /** make request to 1C database
+    /** send request to 1C database
      * @param string $method
      * @param array $params
      * @return string

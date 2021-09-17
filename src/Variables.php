@@ -2,9 +2,7 @@
 
 namespace AlexNzr\BitUmcIntegration;
 
-/**
- * 
- */
+
 class Variables
 {
     const AUTH_LOGIN_1C = 'siteIntegration';
