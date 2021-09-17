@@ -314,7 +314,6 @@ $result = RequestController::sendRequest(json_encode([
     "clinicUid" => "f679444a-22b7-11df-8618-002618dcef2c"
     "specialty" => "Неврология"
     "refUid" => "9e8b672a-9975-11e3-87ec-002618dcef2c"
-    "dateTime" => '["2021-09-20T00:00:00","2021-09-20T14:00:00","2021-09-20T18:00:00"]'
     "orderDate" => "2021-09-20T00:00:00"
     "timeBegin" => "2021-09-20T14:00:00"
     "timeEnd" => "2021-09-20T18:00:00"
