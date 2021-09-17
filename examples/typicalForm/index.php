@@ -31,7 +31,7 @@ if (!empty($_POST["action"])){
     $schedule = json_decode(RequestController::sendRequest(json_encode(["action" => "GetSchedule"])), true);
 }
 
-$clients = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListClients"])), true);
+$clients = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListOrders", "clientUid"=>"84291ec6-161a-11ec-9bc2-c03eba27318f"])), true);
 Utils::print($clients);
 ?>
 
