@@ -46,7 +46,7 @@ Request data(json)
 }
 ```
 
-Response data(json)
+Success response data(json)
 ```
 [
     {
@@ -66,6 +66,13 @@ Response data(json)
 ]
 ```
 
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
 Php code example
 ```
 $clients = RequestController::sendRequest(json_encode(["action" => "GetListClients"]));
@@ -79,7 +86,7 @@ Request data(json)
 }
 ```
 
-Response data(json)
+Success response data(json)
 ```
 [
     {
@@ -87,6 +94,13 @@ Response data(json)
         "uid": "df7870cc3-38a6-11e4-8012-20cf3029e98b"
     }
 ]
+```
+
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
 ```
 
 Php code example
@@ -102,7 +116,7 @@ Request data(json)
 }
 ```
 
-Response data(json)
+Success response data(json)
 ```
 [
     {
@@ -114,6 +128,13 @@ Response data(json)
         "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c"
     }
 ]
+```
+
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
 ```
 
 Php code example
@@ -134,7 +155,7 @@ Request data(json)
 }
 ```
 
-Response data(json)
+Success response data(json)
 ```
 {
         "specialties": [
@@ -178,6 +199,13 @@ Response data(json)
 }
 ```
 
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
 Php code example
 ```
 $schedule = RequestController::sendRequest(json_encode(["action" => "GetSchedule"]));
@@ -192,7 +220,7 @@ Request data(json)
 }
 ```
 
-Response data(json)
+Success response data(json)
 ```
 [
     {
@@ -213,6 +241,13 @@ Response data(json)
 ]
 ```
 
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
 Php code example
 ```
 $orders = RequestController::sendRequest(json_encode([
@@ -221,7 +256,110 @@ $orders = RequestController::sendRequest(json_encode([
 ]));
 ```
 
-"9f51657e-16dd-11ec-9bc2-c03eba27318f"orderUid
+### Create/Update order
+Request data(json)
+
+If this param `clientUid` is empty and `action=CreateOrder`, 1c will create new client in DB.
+
+If param `action` = `CreateOrderUnauthorized`, it will fill param `clientUid` from `src/Variables.php` - `UNAUTHORIZED_USER_UID`.  
+If constant `UNAUTHORIZED_USER_UID` is empty or not valid, it will create new user from other params:
+`UNAUTHORIZED_USER_NAME
+UNAUTHORIZED_USER_MIDDLE_NAME
+UNAUTHORIZED_USER_SURNAME
+UNAUTHORIZED_USER_PHONE`
+
+If param `orderUid` not empty, 1c will update already existing order.
+
+`refUid` - doctor or cabinet uuid from schedule
+```
+{
+    "action"*: "CreateOrder"/"CreateOrderUnauthorized",
+    "clinicUid"*: "f679444a-22b7-11df-8618-002618dcef2c"
+    "refUid"*: "9e8b672a-9975-11e3-87ec-002618dcef2c"
+    "orderDate"*: "2021-09-20T00:00:00"
+    "timeBegin"*: "2021-09-20T14:00:00"
+    "timeEnd"*: "2021-09-20T18:00:00"
+    "name"*: "Игорь" 
+    "surname"*: "Васильевич" 
+    "middleName"*: "Нариманов"
+    "phone"*: "8 (999) 555-55-55"
+    "email": "igor12121@gmail.com"
+    "comment": "Какой-то текст комментария"
+    "address": "г. Москва, ул. Пушкина 56"
+    "clientUid": "84291ec6-161a-11ec-9bc2-c03eba27318f",
+    "orderUid": "01fa3622-16f1-11ec-9bc2-c03eba27318f"
+}
+```
+
+Success response data(json)
+```
+{
+    "orderUid": "01fa3622-16f1-11ec-9bc2-c03eba27318f",
+    "success" => true
+}
+```
+
+Error response data(json)
+```
+{
+    error: "error description for user",
+    "defaultError": "original error description from 1C"
+}
+```
+
+Php code example
+```
+$result = RequestController::sendRequest(json_encode([
+    "action" => "CreateOrderUnauthorized", 
+    "clinicUid" => "f679444a-22b7-11df-8618-002618dcef2c"
+    "specialty" => "Неврология"
+    "refUid" => "9e8b672a-9975-11e3-87ec-002618dcef2c"
+    "dateTime" => '["2021-09-20T00:00:00","2021-09-20T14:00:00","2021-09-20T18:00:00"]'
+    "orderDate" => "2021-09-20T00:00:00"
+    "timeBegin" => "2021-09-20T14:00:00"
+    "timeEnd" => "2021-09-20T18:00:00"
+    "name" => "Игорь" 
+    "surname" => "Васильевич" 
+    "middleName" => "Нариманов"
+    "phone" => "8 (999) 555-55-55"
+    "email" => "igor12121@gmail.com"
+    "comment" => "Какой-то текст комментария"
+    "address" => "г. Москва, ул. Пушкина 56"
+]));
+```
+
+### Canceling order
+Request data(json)
+```
+{
+    "action": "CancelOrder",
+    "orderUid": "84291ec6-161a-11ec-9bc2-c03eba27318f"
+}
+```
+
+Success response data(json)
+```
+{
+    "success": true
+}
+```
+
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
+Php code example
+```
+$result = RequestController::sendRequest(json_encode([
+    "action" => "CancelOrder", 
+    "orderUid"=>"84291ec6-161a-11ec-9bc2-c03eba27318f"
+]));
+```
+
+
 ## Examples
 Also, you can see the [examples](https://github.com/alex-nzr/bit-umc-lib/tree/master/examples)
 

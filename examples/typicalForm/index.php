@@ -19,7 +19,7 @@ if (!empty($_POST["action"])){
     if (is_string($data)){
         $data = json_decode($data, true);
         $resText = $data['success'] ? "Order was created successfully" : $data['error'];
-        Utils::print($data);
+        //Utils::print($data);
     }
 }else{
     $clinics = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListClinics"])), true);
@@ -30,9 +30,6 @@ if (!empty($_POST["action"])){
 
     $schedule = json_decode(RequestController::sendRequest(json_encode(["action" => "GetSchedule"])), true);
 }
-
-$clients = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListOrders", "clientUid"=>"84291ec6-161a-11ec-9bc2-c03eba27318f"])), true);
-Utils::print($clients);
 ?>
 
 <!DOCTYPE html>
