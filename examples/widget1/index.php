@@ -8,9 +8,7 @@ else{ die("integration library not found"); }
 
 use AlexNzr\BitUmcIntegration\RequestController;
 
-if (!empty($_POST["action"])){
-    print_r(RequestController::sendRequest($_POST));
-}
+die("Sorry, this page is in development now");
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +23,7 @@ if (!empty($_POST["action"])){
 
 <body>
 
-<!--<div id="appointment-form" class="appointment-form">
+<div id="appointment-form" class="appointment-form">
     <div class="selection-block" id="appointment-form-clinic" data-step="1">
         <p class="selection-item-selected" data-test="asd" data-mode="def">Выберите клинику *</p>
         <ul class="appointment-form_head_list selection-item-list" id="clinic_list"></ul>
@@ -69,28 +67,7 @@ if (!empty($_POST["action"])){
     <div class="appointment-form_submit-wrapper">
         <button type="submit" id="create_order" class="appointment-form_button">Записаться на приём</button>
     </div>
-</div>-->
-
-<form action="" method="post">
-    <input type="text" name="clinicGUID" placeholder="clinicGUID" value="4c68deb4-22c3-11df-8618-002618dcef2c">
-    <input type="text" name="refUID" placeholder="refUID" value="ac30e13a-3087-11dc-8594-005056c00008">
-    <br>
-    <input type="text" name="surname" placeholder="surname" value="bot">
-    <input type="text" name="middleName" placeholder="middleName" value="bot">
-    <input type="text" name="name" placeholder="name" value="bot">
-    <br>
-    <input type="text" name="orderDate" placeholder="orderDate" value="20210913">
-    <input type="text" name="timeBegin" placeholder="timeBegin" value="2021-09-13T18:30:00">
-    <input type="text" name="timeEnd" placeholder="timeEnd" value="2021-09-13T21:00:00">
-    <br>
-    <input type="text" name="phone" placeholder="phone" value="8 (999) 666-55-11">
-    <input type="email" name="email" placeholder="email" value="bot@1cbit.ru">
-    <input type="text" name="comment" placeholder="comment" value="Lorem ipsum dastard">
-    <input type="text" name="address" placeholder="address" value="Street and home">
-    <br>
-    <input type="text" name="action" placeholder="action name" value="CreateOrder">
-    <button>send</button>
-</form>
+</div>
 
 <div class="appointment-result-wrapper">
     <p id="appointment-result"></p>
