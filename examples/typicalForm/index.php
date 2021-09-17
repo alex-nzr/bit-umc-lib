@@ -9,35 +9,30 @@ else{ die("integration library not found"); }
 use AlexNzr\BitUmcIntegration\RequestController;
 use AlexNzr\BitUmcIntegration\Utils;
 
-$clientUid = "84291ec6-161a-11ec-9bc2-c03eba27318f";
-//Utils::print(json_decode(RequestController::sendRequest(["action" => "GetListOrders", "clientUid"=>$clientUid]), true));
-//$_POST["orderUid"] = "9f51657e-16dd-11ec-9bc2-c03eba27318f";
-//Utils::print(json_decode(RequestController::sendRequest(["action" => "CancelOrder", "orderUid"=>"9f51657e-16dd-11ec-9bc2-c03eba27318f", "reason" => "Important reason"]), true));
-
 $resText = '';
 $errText = [];
 
 $clinics = [];
 $schedule = [];
 if (!empty($_POST["action"])){
-    $data = RequestController::sendRequest($_POST);
+    $data = RequestController::sendRequest(json_encode($_POST));
     if (is_string($data)){
         $data = json_decode($data, true);
         $resText = $data['success'] ? "Order was created successfully" : $data['error'];
         Utils::print($data);
     }
 }else{
-    $clinics = json_decode(RequestController::sendRequest(["action" => "GetListClinics"]), true);
+    $clinics = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListClinics"])), true);
     if (!empty($clinics["error"]))
     {
         $errText[] = $clinics["error"];
     }
 
-    $employees = json_decode(RequestController::sendRequest(["action" => "GetListEmployees"]), true);
-    $schedule = json_decode(RequestController::sendRequest(["action" => "GetSchedule"]), true);
+    $schedule = json_decode(RequestController::sendRequest(json_encode(["action" => "GetSchedule"])), true);
 }
 
-
+$clients = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListClients"])), true);
+Utils::print($clients);
 ?>
 
 <!DOCTYPE html>

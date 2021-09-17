@@ -265,7 +265,7 @@ class RequestService{
 
         if($curl = curl_init())
         {
-            $authToken = base64_encode(Variables::AUTH_LOGIN.Variables::COLON.Variables::AUTH_PASSWORD);
+            $authToken = base64_encode(Variables::AUTH_LOGIN_1C.Variables::COLON.Variables::AUTH_PASSWORD_1C);
             $headers = array(
                 "Accept: application/json",
                 "Authorization: Basic " . $authToken,
