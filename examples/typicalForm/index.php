@@ -72,8 +72,8 @@ if (!empty($_POST["action"])){
                     <div class="input-group mb-1">
                         <select name="specialty" class="form-select" style="display: none;" required>
                             <option selected disabled>Select the specialty</option>
-                            <?foreach ($schedule["specialties"] as $specialty):?>
-                                <option value="<?=$specialty?>"><?=$specialty?></option>
+                            <?foreach ($schedule["employees"] as $employee):?>
+                                <option value="<?=$employee["specialty"]?>"><?=$employee["specialty"]?></option>
                             <?endforeach;?>
                         </select>
                     </div>

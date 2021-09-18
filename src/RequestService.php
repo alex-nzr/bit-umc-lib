@@ -166,20 +166,22 @@ class RequestService{
                     $schedule = array($schedule);
                 }
 
-                $specialties = [];
+                $employees = [];
                 $formattedSchedule = [];
 
                 foreach ($schedule as $key => $item)
                 {
+                    if (isset($item["СотрудникID"])){
+                        $formattedSchedule[$key]["refUid"] = $item["СотрудникID"];
+                        $employees[$item["СотрудникID"]] = [];
+                    }
                     if (isset($item["Специализация"])){
-                        $specialties[] = $item["Специализация"];
+                        $employees[$item["СотрудникID"]]["specialty"] = $item["Специализация"];
                         $formattedSchedule[$key]["specialty"] = $item["Специализация"];
                     }
                     if (isset($item["СотрудникФИО"])){
+                        $employees[$item["СотрудникID"]]["name"] = $item["СотрудникФИО"];
                         $formattedSchedule[$key]["name"] = $item["СотрудникФИО"];
-                    }
-                    if (isset($item["СотрудникID"])){
-                        $formattedSchedule[$key]["refUid"] = $item["СотрудникID"];
                     }
                     if (isset($item["Клиника"])){
                         $formattedSchedule[$key]["clinicUid"] = $item["Клиника"];
@@ -203,7 +205,7 @@ class RequestService{
                     $formattedSchedule[$key]["timetable"]["busy"] = Utils::formatTimetable($busyTime);
                 }
                 $data = [
-                    "specialties" => array_unique($specialties),
+                    "employees" => $employees,
                     "schedule" => $formattedSchedule,
                 ];
             }

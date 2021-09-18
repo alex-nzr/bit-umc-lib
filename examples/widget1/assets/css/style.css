@@ -23,7 +23,7 @@ body{
 	font-style: normal;
 	font-size: 14px;
 	line-height: 16px;
-	background: #025ea1;
+	background: url("../img/bg.jpeg") center center / cover no-repeat;
 	color: #f5f5f5;
 }
 ol,ul,li{
@@ -52,18 +52,44 @@ h1,h2,h3,h4,h5,h6,p,label{
 		height: 100%;
 	}
 }
+
+/*---------------------------------------------------------*/
 #appointment-form{
+	position: fixed;
+	left: 35px;
+	bottom: 40px;
+	width: 300px;
+	height: 605px;
 	padding: 20px 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: 100%;
-	height: 100%;
+	max-height: calc(100vh - 20px);
 	background: #025ea1;
+	overflow-y: scroll;
+	box-shadow: 0 0 5px 1px #025ea1;
 	border-radius: 6px;
+	transition: .2s;
+	transform: scale3d(0,0,0);
+	transform-origin: left bottom;
+	z-index: 1000;
 }
 #appointment-form.off{
 	pointer-events: none;
+}
+
+#appointment-form.active{
+	transform: scale3d(1,1,1);
+}
+#appointment-form::-webkit-scrollbar{
+	width: 2px;
+	background: transparent;
+	border-radius: 10px;
+}
+#appointment-form::-webkit-scrollbar-thumb{
+	width: 2px;
+	background: #18538E;
+	border-radius: 10px;
 }
 
 .selection-block,
@@ -286,6 +312,107 @@ h1,h2,h3,h4,h5,h6,p,label{
 	transform: translate(-50%, 0%); 
 	transition: .2s;
 	border-radius: 50%;
-	background: url(../img/success.svg) center center/contain no-repeat;
+	background: url("../img/success.svg") center center/contain no-repeat;
 	pointer-events: none;
+}
+
+/*********************************************************************************/
+.appointment-button-wrapper{
+	opacity: 0;
+	pointer-events: none;
+	transition: .3s;
+}
+.appointment-button-wrapper.active{
+	opacity: 1;
+	pointer-events: auto;
+}
+#appointment-button{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	left: 10px;
+	bottom: 20px;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	border:none;
+	outline: none;
+	background: transparent;
+	z-index: 1005;
+	cursor: pointer;
+	transition: all .2s, color 0s;
+}
+#appointment-button:before{
+	content:'';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: rgba(2, 94, 161, .5);
+	animation: appointmentPulse 1.5s linear infinite;
+	z-index: 0;
+	cursor: pointer;
+	transition: .2s;
+}
+#appointment-button:after{
+	content:'';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+	background: url("../img/medical-appointment.svg") center center/contain no-repeat #025ea1;
+	z-index: 1;
+	cursor: pointer;
+	transition: .2s;
+}
+#appointment-button.active{
+	background: url("../img/cancel.svg") center center/contain no-repeat;
+	box-shadow: 0 0 5px 1px #18538E;
+
+	width: 36px;
+	padding: 0;
+	color: transparent;
+	border-radius: 50%;
+	font-size: .1px;
+}
+#appointment-button.active:before,
+#appointment-button.active:after{
+	animation: none;
+	opacity: 0;
+}
+
+#appointment-button.success{
+	background: url("../img/success.svg") center center/contain no-repeat #025ea1;
+	box-shadow: none;
+	width: 36px;
+	padding: 0;
+	color: transparent;
+	border-radius: 50%;
+	font-size: 0;
+}
+#appointment-button.success:before,
+#appointment-button.success:after{
+	animation: none;
+	opacity: 0 !important;
+}
+@keyframes appointmentPulse {
+	from{
+		transform: scale3d(1,1,1);
+		opacity: 1;
+	}
+	to{
+		transform: scale3d(1.2,1.2,1.2);
+		opacity: 0;
+	}
+}
+@media (max-width: 768px){
+	#appointment-form{
+		height: calc(80vh - 60px);
+		max-height: calc(80vh - 60px);
+	}
 }
