@@ -17,6 +17,7 @@ class Variables
 	const HTTP_SERVICE_API_VERSION = 'V1';
 
 	const SCHEDULE_PERIOD_IN_DAYS = 30;
+	const DEFAULT_APPOINTMENT_DURATION = 1800;
 
 	const REQUIRED_ORDER_PARAMS = [
         'refUid',

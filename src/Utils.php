@@ -137,13 +137,18 @@ class Utils{
     }
 
     /** Beautify array of timelines
-     * @param mixed array
+     * @param $array
+     * @param int $duration
      * @return array
      */
-    public static function formatTimetable($array): array
+    public static function formatTimetable($array, int $duration): array
     {
         if (!is_array($array) || empty($array)){
             return [];
+        }
+
+        if (!$duration > 0){
+            $duration = Variables::DEFAULT_APPOINTMENT_DURATION;
         }
 
         if (!empty($array)){
@@ -151,16 +156,29 @@ class Utils{
                 $array = array($array);
             }
             $formattedArray = [];
-            foreach ($array as $item) {
-                $formattedArray[] = [
-                    "typeOfTimeUid" => $item["ВидВремени"],
-                    "date" => $item["Дата"],
-                    "timeBegin" => $item["ВремяНачала"],
-                    "timeEnd" => $item["ВремяОкончания"],
-                    "formattedDate" => date("d-m-Y", strtotime($item["Дата"])),
-                    "formattedTimeBegin" => date("H:i", strtotime($item["ВремяНачала"])),
-                    "formattedTimeEnd" => date("H:i", strtotime($item["ВремяОкончания"])),
-                ];
+            foreach ($array as $item)
+            {
+                $timestampTimeBegin = strtotime($item["ВремяНачала"]);
+                $timestampTimeEnd = strtotime($item["ВремяОкончания"]);
+
+                $timeDifference = $timestampTimeEnd - $timestampTimeBegin;
+                $appointmentsCount = round($timeDifference / $duration);
+
+                for ($i = 0; $i < $appointmentsCount; $i++)
+                {
+                    $start = $timestampTimeBegin + ($duration * $i);
+                    $end = $timestampTimeBegin + ($duration * ($i+1));
+
+                    $formattedArray[] = [
+                        "typeOfTimeUid" => $item["ВидВремени"],
+                        "date" => $item["Дата"],
+                        "timeBegin" => date("Y-m-d", $start) ."T". date("H:i:s", $start),
+                        "timeEnd" => date("Y-m-d", $end) ."T". date("H:i:s", $end),
+                        "formattedDate" => date("d-m-Y", strtotime($item["Дата"])),
+                        "formattedTimeBegin" => date("H:i", $start),
+                        "formattedTimeEnd" => date("H:i", $end),
+                    ];
+                }
             }
             return $formattedArray;
         }

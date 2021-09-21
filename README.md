@@ -143,12 +143,13 @@ $employees = RequestController::sendRequest(json_encode(["action" => "GetListEmp
 ```
 
 ### Get schedule
-You can configure period in `src/Variables.php`. 30 days default
+You can configure period(30 days default) and duration(1800 seconds default) in `src/Variables.php`. 
 ```
 SCHEDULE_PERIOD_IN_DAYS = 30;
+DEFAULT_APPOINTMENT_DURATION = 1800;
 ```
 
-Request data(json)
+Request data(json) DEFAULT_APPOINTMENT_DURATION
 ```
 {
     "action": "GetSchedule"
@@ -175,16 +176,26 @@ Success response data(json)
                 "refUid": "ac30e13a-3087-11dc-8594-005056c00008",
                 "clinicUid": "4c68deb4-22c3-11df-8618-002618dcef2c",
                 "duration": "0001-01-01T00:00:00",
+                "durationInSeconds": 1800,
                 "timetable": {
                     "free": [
                         {
                             "typeOfTimeUid": "624f2a40-5aa8-4f01-83f4-0f38535364bb",
                             "date": "2021-09-18T00:00:00",
                             "timeBegin": "2021-09-18T18:30:00",
-                            "timeEnd": "2021-09-18T21:00:00",
+                            "timeEnd": "2021-09-18T19:00:00",
                             "formattedDate": "18-09-2021",
                             "formattedTimeBegin": "18:30",
-                            "formattedTimeEnd": "21:00"
+                            "formattedTimeEnd": "19:00",
+                        },
+                        {
+                            "typeOfTimeUid": "624f2a40-5aa8-4f01-83f4-0f38535364bb",
+                            "date": "2021-09-18T00:00:00",
+                            "timeBegin": "2021-09-18T19:00:00",
+                            "timeEnd": "2021-09-18T19:30:00",
+                            "formattedDate": "18-09-2021",
+                            "formattedTimeBegin": "19:00",
+                            "formattedTimeEnd": "19:30",
                         }
                     ],
                     "busy": [
@@ -192,10 +203,10 @@ Success response data(json)
                             "typeOfTimeUid": "624f2a40-5aa8-4f01-83f4-0f38535364bb",
                             "date": "2021-09-30T00:00:00",
                             "timeBegin": "2021-09-30T18:30:00",
-                            "timeEnd": "2021-09-30T21:00:00",
+                            "timeEnd": "2021-09-30T19:00:00",
                             "formattedDate": "30-09-2021",
                             "formattedTimeBegin": "18:30",
-                            "formattedTimeEnd": "21:00"
+                            "formattedTimeEnd": "19:00",
                         }
                     ]
                 }

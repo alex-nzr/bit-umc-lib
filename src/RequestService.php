@@ -186,8 +186,13 @@ class RequestService{
                     if (isset($item["Клиника"])){
                         $formattedSchedule[$key]["clinicUid"] = $item["Клиника"];
                     }
+
+                    $duration = 0;
                     if (isset($item["ДлительностьПриема"])){
                         $formattedSchedule[$key]["duration"] = $item["ДлительностьПриема"];
+                        $duration = intval(date("H", strtotime($item["ДлительностьПриема"]))) * 3600
+                                    + intval(date("i", strtotime($item["ДлительностьПриема"]))) * 60;
+                        $formattedSchedule[$key]["durationInSeconds"] = $duration;
                     }
 
                     $freeTime = is_array($item["ПериодыГрафика"]["СвободноеВремя"])
@@ -201,8 +206,8 @@ class RequestService{
                         $busyTime = array($busyTime);
                     }
 
-                    $formattedSchedule[$key]["timetable"]["free"] = Utils::formatTimetable($freeTime);
-                    $formattedSchedule[$key]["timetable"]["busy"] = Utils::formatTimetable($busyTime);
+                    $formattedSchedule[$key]["timetable"]["free"] = Utils::formatTimetable($freeTime, $duration);
+                    $formattedSchedule[$key]["timetable"]["busy"] = Utils::formatTimetable($busyTime, $duration);
                 }
                 $data = [
                     "employees" => $employees,

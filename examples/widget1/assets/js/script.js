@@ -27,10 +27,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			step4: 'Выберите время *',
 		},
 		selected: {
-			clinicGUID: false,
+			clinicUid: false,
 			specialty: false,
 			doctorName: false,
-			doctorUID: false,
+			refUid: false,
 			orderDate: false,
 			timeBegin: false,
 			timeEnd: false,
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		const sbmtBtn = document.getElementById('create_order');
 		const name = document.getElementById('name');
 		const surname = document.getElementById('surname');
-		const middleName = document.getElementById('parentname');
+		const middleName = document.getElementById('middleName');
 		const phone = document.getElementById('phone');
 		const comment = document.getElementById('comment');
 
@@ -68,10 +68,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			name,
 			surname,
 			phone,
-			parentname,
+			middleName,
 		];
 
-		state.requiredInputs.forEach((field, i, fields) => {
+		state.requiredInputs.forEach(field => {
 			field.addEventListener('input', (e)=>{
 				checkAll();
 			})
@@ -89,6 +89,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 	{//start widget
 		window.addEventListener("load", async ()=>{
+			toggleWidgetLoader();
 			try{
 				const clinicsResponse = await GetListClinic();
 				const clinics = await clinicsResponse.json();
@@ -161,8 +162,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 	const startRender = () => {
 		const clinicsRendered = renderClinicList();
-		if (clinicsRendered){
-			activateButton();
+		if (clinicsRendered)
+		{
+			setTimeout(()=>{
+				toggleWidgetLoader(false);
+				activateButton();
+			}, 3000)
 		}
 	}
 
@@ -171,9 +176,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			state.clinics.forEach((clinic) => {
 				const li = document.createElement('li');
 				if (clinic.uid) {
-					li.dataset.guid = clinic.uid;
+					li.dataset.uid = clinic.uid;
 				}else{
-					li.dataset.guid = "не заполнено";
+					li.dataset.uid = "не заполнено";
 				}
 				li.textContent = clinic.name;
 				document.getElementById('clinic_list').append(li);
@@ -185,18 +190,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	}
 
 	const renderSpecialtiesList = () => {
-		//на данный момент нет возможности разбить специализации по клиникам, как планировалось,
-		// поэтому нет провеки параметра state.selected.clinicGUID
-		//по этой же причине специализации сохраняются в массиве без доп параметров
 		const specList = document.getElementById('specialties_list');
 		specList.innerHTML = '';
 		state.actionsState[`appointment-form-specialties`] = false;
-		if(state.specialties.length) {
-			state.specialties.forEach((specialty) => {
+		if(Object.keys(state.employees).length > 0) {
+			for (let uid in state.employees) {
 				const li = document.createElement('li');
-				li.textContent = specialty;
-				specList.append(li);
-			});
+				if (state.employees.hasOwnProperty(uid)){
+					li.textContent = state.employees[uid].specialty;
+					specList.append(li);
+				}
+			}
 			return addListActions('appointment-form-specialties');
 		}
 	}
@@ -205,67 +209,47 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		const empList = document.getElementById('employees_list');
 		empList.innerHTML = '';
 		state.actionsState[`appointment-form-employees`] = false;
-		if(state.employees.length) {
-			state.employees.forEach((employee) => {
-				if (employee.spec == state.selected.specialty) {
-					const li = document.createElement('li');
-					li.dataset.uid = employee.UID;
-					li.dataset.specialty = employee.spec;
-					li.textContent = employee.name;
-					empList.append(li);
+		if(Object.keys(state.employees).length > 0) {
+			for (let uid in state.employees)
+			{
+				if (state.employees.hasOwnProperty(uid))
+				{
+					if (state.selected.specialty === state.employees[uid].specialty)
+					{
+						const li = document.createElement('li');
+						li.dataset.uid = uid;
+						li.dataset.specialty = state.employees[uid].specialty;
+						li.textContent = state.employees[uid].name;
+						empList.append(li);
+					}
 				}
-			});
+			}
 			return addListActions('appointment-form-employees');
 		}
 	}
 
 	const renderScheduleList = () => {
-		const sheduleList = document.getElementById('shedule_list');
-		sheduleList.innerHTML = '';
-		state.actionsState[`appointment-form-shedule`] = false;
-		if(state.shedule.length) {
-			state.shedule.forEach((employeeShedule) => {
-				if (employeeShedule.Клиника == state.selected.clinicGUID && employeeShedule.СотрудникID == state.selected.doctorUID) {
-					if (employeeShedule.ПериодыГрафика.СвободноеВремя && employeeShedule.ПериодыГрафика.СвободноеВремя.ПериодГрафика) {
-						if (!employeeShedule.ПериодыГрафика.СвободноеВремя.ПериодГрафика.length) {
-							employeeShedule.ПериодыГрафика.СвободноеВремя.ПериодГрафика = [employeeShedule.ПериодыГрафика.СвободноеВремя.ПериодГрафика];
-						}
+		const scheduleList = document.getElementById('schedule_list');
+		scheduleList.innerHTML = '';
+		state.actionsState[`appointment-form-schedule`] = false;
+		if(state.schedule.length) {
+			state.schedule.forEach((employeeSchedule) => {
+				if (employeeSchedule.clinicUid === state.selected.clinicUid && employeeSchedule.refUid === state.selected.refUid)
+				{
+					if (employeeSchedule.timetable?.free?.length)
+					{
+						employeeSchedule.timetable.free.forEach((day) => {
+							const li = document.createElement('li');
+							const span = document.createElement('span');
 
-						employeeShedule.ПериодыГрафика.СвободноеВремя.ПериодГрафика.forEach((day) => {
-							const dateDiff = convertDate(day.ВремяОкончания, false, true) - convertDate(day.ВремяНачала, false, true);//свободное для записи время в миллисекундах
-							let duration = 1000*60*30;//длительность приёма. Ставим 30 минут. По желанию можно брать из объекта day и конвертировать в миллисекунды
-							const halfHoursCount = (dateDiff/duration).toFixed(0);//количество приёмов в промежутке свободного времени
-							const tail = dateDiff%duration;//остаток времени, если интервалы не делятся на длительность ровно
-							const periods = []; //массив, в который упадут интервалы приёмов, в читабельном формате
-							for (let i = 0; i < halfHoursCount; i++) {
-								let start = convertDate(day.ВремяНачала, false, true) + (duration * i);//время в мс
-								let finish = convertDate(day.ВремяНачала, false, true) + (duration * (i+1));//время в мс
+							li.dataset.date = day.date;
 
-								periods.push({
-									start: convertTime(start),//читабельное время для показа в форме
-									finish: convertTime(finish),//читабельное время для показа в форме
-								});
-							}
-							if(tail && tail>(15*60*1000)){//если остаток больше 15 минут делаем его ещё одним приёмом
-								periods.push({
-									start: convertTime((convertDate(day.ВремяОкончания, false, true) - tail)),
-									finish: convertTime(convertDate(day.ВремяОкончания, false, true)),
-								});
-							}
-
-							periods.forEach((period) => {
-								const li = document.createElement('li');
-								const span = document.createElement('span');
-
-								li.dataset.date = convertDate(day.Дата);//дата для вывода пользователю в форме
-
-								li.dataset.start = period.start;
-								li.dataset.finish = period.finish;
-								li.textContent = `${li.dataset.date} `;
-								span.textContent = `${li.dataset.start}-${li.dataset.finish}`;
-								li.append(span);
-								sheduleList.append(li);
-							});
+							li.dataset.start = day.timeBegin;
+							li.dataset.end = day.timeEnd;
+							li.textContent = `${day.formattedDate} `;
+							span.textContent = `${day.formattedTimeBegin}-${day.formattedTimeEnd}`;
+							li.append(span);
+							scheduleList.append(li);
 						});
 					}else{
 						const span = document.createElement('span');
@@ -273,11 +257,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 						span.style.fontSize = '11px';
 						span.style.padding = '0 15px';
 						span.textContent = `К сожалению, у данного специалиста нет записи на ближайшее время`;
-						sheduleList.append(span);
+						scheduleList.append(span);
 					}
 				}
 			});
-			return addListActions('appointment-form-shedule');
+			return addListActions('appointment-form-schedule');
 		}
 	}
 
@@ -288,7 +272,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		const select = document.getElementById(blockID).querySelector('.selection-item-selected');
 		const list = select.nextElementSibling;
 
-		if (list.classList.contains('selection-item-list') && list.tagName == 'UL' && list.id) {
+		if (list.classList.contains('selection-item-list') && list.tagName === 'UL' && list.id) {
 			if (!select.classList.contains('activated')) {
 				select.addEventListener('click', (e)=>{
 					list.classList.toggle('active');
@@ -303,7 +287,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			state.actionsState[`${blockID}`] = true;
 			return addItemActions(list.id);
 		}else{
-			return console.error('Invalid itemlist');
+			return errorMessageToLog('Invalid items list');
 		}
 	}
 	const addItemActions = (listID) => {
@@ -312,13 +296,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			el.addEventListener('click', (e)=>{
 				const selected = list.previousElementSibling;
 
-				if (selected.classList.contains('selection-item-selected') && selected.tagName == 'P') {
+				if (selected.classList.contains('selection-item-selected') && selected.tagName === 'P') {
 					list.classList.toggle('active');
 					selected.textContent = e.currentTarget.textContent;
 
 					switch (listID) {
 						case 'clinic_list':
-							state.selected.clinicGUID = e.currentTarget.dataset.guid;
+							state.selected.clinicUid = e.currentTarget.dataset.uid;
 							state.step = 1;
 							renderSpecialtiesList();
 							break;
@@ -329,14 +313,14 @@ document.addEventListener('DOMContentLoaded', ()=>{
 							break;
 						case 'employees_list':
 							state.selected.doctorName = e.currentTarget.textContent;
-							state.selected.doctorUID = e.currentTarget.dataset.uid;
+							state.selected.refUid = e.currentTarget.dataset.uid;
 							state.step = 3;
-							renderSheduleList();
+							renderScheduleList();
 							break;
-						case 'shedule_list':
-							state.selected.orderDate = convertDateToRequest(e.currentTarget.dataset.date);//конвертирование даты и времени в формат который нужен 1С
-							state.selected.timeBegin = convertTimeToRequest(e.currentTarget.dataset.date, e.currentTarget.dataset.start);//конвертирование даты и времени в формат который нужен 1С
-							state.selected.timeEnd = convertTimeToRequest(e.currentTarget.dataset.date, e.currentTarget.dataset.finish);//конвертирование даты и времени в формат который нужен 1С
+						case 'schedule_list':
+							state.selected.orderDate = e.currentTarget.dataset.date;
+							state.selected.timeBegin = e.currentTarget.dataset.start;
+							state.selected.timeEnd = e.currentTarget.dataset.end;
 							state.step = 4;
 							break;
 						default:
@@ -350,66 +334,55 @@ document.addEventListener('DOMContentLoaded', ()=>{
 				}
 			})
 		});
-		return;
 	}
 
 	const createOrder = async(dataObj, button) => {
-		if (checkBeforeSubmit(dataObj)) {
-
+		if (checkBeforeSubmit(dataObj))
+		{
 			button.classList.add('loading');
 
 			try {
-				state.request.body.methodName = 'CreateOrder';
-
-				state.request.body.doctorUID 	= dataObj.doctorUID;
-				state.request.body.surname 		= dataObj.surname;
-				state.request.body.parentname 	= dataObj.parentname;
-				state.request.body.name 		= dataObj.name;
-				state.request.body.orderDate 	= dataObj.orderDate;
-				state.request.body.timeBegin 	= dataObj.timeBegin;
-				state.request.body.timeEnd 		= dataObj.timeEnd;
-				state.request.body.phone 		= dataObj.phone;
-				state.request.body.clinicGUID 	= dataObj.clinicGUID;
-				if (dataObj.comment) {
-					state.request.body.comment 	= dataObj.comment;
-				}
+				dataObj.action = 'CreateOrder';
 
 				const response = await fetch(state.request.url, {
 					method: state.request.method,
 					headers:state.request.headers,
-					body: encodeToUrl(state.request.body),
+					body: JSON.stringify(dataObj),
 				});
 
-				if (response.ok) {
-
+				if (response.ok)
+				{
 					const result = await response.json();
 
-					if (result.requestError) {
-						throw new Error(result.requestError);
-						return false;
-					}else if(result.ОтветНаЗаписьССайта){
-
-						button.classList.remove('loading');
-
-						if (result.ОтветНаЗаписьССайта.Результат == "true") {
-							return finalizingWidget(true);
-						}else{
-							return finalizingWidget(false);
+					if (result.error)
+					{
+						finalizingWidget(false);
+						errorMessageToLog(result.error);
+						if (result.hasOwnProperty("defaultError")){
+							errorMessageToLog(result.defaultError);
 						}
-					}else{
-						throw new Error('Can not decode server response.');
-						return false;
 					}
-				}else{
-					throw new Error('Can not connect to 1c');
-					return false;
+					else if(result.success)
+					{
+						button.classList.remove('loading');
+						finalizingWidget(true);
+					}
+					else
+					{
+						errorMessageToLog('Can not decode server response.');
+					}
+				}
+				else
+				{
+					errorMessageToLog('Can not connect to 1c');
 				}
 			} catch(e) {
-				console.error(e);
-				return false;
+				errorMessageToLog(e);
 			}
-		}else{
-			console.error('Have not all required params to creating an order');
+		}
+		else
+		{
+			errorMessageToLog('Have not all required params to creating an order');
 		}
 	}
 
@@ -431,9 +404,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 	const resetValues = (block) => {
 		const accord = {
-			1: ['clinicGUID'],
+			1: ['clinicUid'],
 			2: ['specialty'],
-			3: ['doctorUID','doctorName'],
+			3: ['refUid','doctorName'],
 			4: ['orderDate', 'timeBegin', 'timeEnd'],
 		}
 
@@ -444,78 +417,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		});
 	}
 
-	const encodeToUrl = (obj)=>{
-		let params = new URLSearchParams();
-
-		for (let prop in obj) {
-			params.append(prop, obj[prop]);
-		}
-
-		return params.toString();
-	}
-
-	const convertDate = (string, time = false, full = false) => {
-		//const formattedString = string.replace('T', ' ');
-		const date = new Date(string);
-
-		if (full) {
-			return Number(date);
-		}
-
-		if (time) {
-			let hours = date.getHours();
-			if (Number(hours)<10) {
-				hours = `0${hours}`;
-			}
-
-			let minutes = date.getMinutes();
-			if (Number(minutes)<10) {
-				minutes = `0${minutes}`;
-			}
-
-			return `${hours}:${minutes}`;
-		}else{
-			let day = date.getDate();
-			if (Number(day)<10) {
-				day = `0${day}`;
-			}
-
-			let month = date.getMonth()+1;
-			if (Number(month)<10) {
-				month = `0${month}`;
-			}
-
-			return `${day}.${month}.${date.getFullYear()}`;
-		}
-	}
-
-	const convertTime = (unixTime) => {
-		const date = new Date(unixTime);
-
-		let hours = date.getHours();
-		if (Number(hours)<10) {
-			hours = `0${hours}`;
-		}
-
-		let minutes = date.getMinutes();
-		if (Number(minutes)<10) {
-			minutes = `0${minutes}`;
-		}
-
-		return `${hours}:${minutes}`;
-	}
-
-	const convertTimeToRequest = (date, time) => {
-		//"2021-01-28T13:00:00"
-		let newDate = date.split('.').reverse().join('-');
-		let newDateString =  `${newDate} ${time}:00`;
-		let newDateNumberInSec = (Number(new Date(newDateString))/1000).toFixed(0);
-		return newDateNumberInSec;
-	}
-	const convertDateToRequest = (date) => {
-		return date.split('.').reverse().join('');
-	}
-
 	const checkCompletedFields = (textInputsArray) =>{
 		if (!textInputsArray || !textInputsArray.length) {
 			return false;
@@ -524,7 +425,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		let allValid = true;
 		textInputsArray.forEach((input) => {
 			if (input.value) {
-				if (input.type == 'tel') {
+				if (input.type === 'tel') {
 					if (input.value.length < 12) {
 						allValid = false;
 						state.selected[input.id] = false;
@@ -546,15 +447,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			}
 		});
 
-		if (!state.selected.clinicGUID ||
+		if (!state.selected.clinicUid ||
 			!state.selected.specialty ||
-			!state.selected.doctorUID ||
+			!state.selected.refUid ||
 			!state.selected.orderDate ||
 			!state.selected.timeBegin ||
 			!state.selected.timeEnd ||
 			!state.selected.name ||
 			!state.selected.surname ||
-			!state.selected.parentname ||
+			!state.selected.middleName ||
 			!state.selected.phone) {
 
 			allValid = false;
@@ -577,13 +478,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 		let isValid = true;
 
-		if (!obj.clinicGUID) {document.getElementById('appointment-form-clinic').classList.add('error');isValid = false;}
-		if (!obj.doctorUID) {document.getElementById('appointment-form-employees').classList.add('error');isValid = false;}
+		if (!obj.clinicUid) {document.getElementById('appointment-form-clinic').classList.add('error');isValid = false;}
+		if (!obj.refUid) {document.getElementById('appointment-form-employees').classList.add('error');isValid = false;}
 		if (!obj.specialty) {document.getElementById('appointment-form-specialties').classList.add('error');isValid = false;}
-		if (!obj.orderDate||!obj.timeBegin||!obj.timeEnd) {document.getElementById('appointment-form-shedule').classList.add('error');isValid = false;}
+		if (!obj.orderDate||!obj.timeBegin||!obj.timeEnd) {document.getElementById('appointment-form-schedule').classList.add('error');isValid = false;}
 		if (!obj.surname) {document.getElementById('surname').parentElement.classList.add('error');isValid = false;}
 		if (!obj.name) {document.getElementById('name').parentElement.classList.add('error');isValid = false;}
-		if (!obj.parentname) {document.getElementById('parentname').parentElement.classList.add('error');isValid = false;}
+		if (!obj.middleName) {document.getElementById('middleName').parentElement.classList.add('error');isValid = false;}
 		if (!obj.phone || !phoneCodeIsValid(obj.phone) || obj.phone.length<12) {document.getElementById('phone').parentElement.classList.add('error');isValid = false;}
 
 		return isValid;
@@ -592,7 +493,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	const maskInput = (input, mask)=> {
 
 		const value = input.value;
-		const literalPattern = /[0\*]/;
+		const literalPattern = /[0]/;
 		const numberPattern = /[0-9]/;
 
 		let newValue = "";
@@ -635,7 +536,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 			if (success) {
 				resText.textContent = "Заявка успешно создана";
 				resText.classList.add('success');
-				return window.top.postMessage('appointmentSuccess', '*');
+				finalAnimations();
 			}
 			else{
 				resText.textContent = errorDesc;
@@ -648,48 +549,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		console.error("ERROR:\n" + message);
 	}
 
-	const activateButton = () => {
-		const btn = document.querySelector('.appointment-button-wrapper');
-		if (btn){
-			btn.addEventListener('click', showWidget);
-			btn.classList.add('on');
-			btn.classList.toggle('active')
+	const toggleWidgetLoader = (on = true) => {
+		const btnWrap = document.querySelector('.appointment-button-wrapper');
+		if (btnWrap){
+			if (on){
+				btnWrap.classList.add('loading');
+			}else{
+				btnWrap.classList.remove('loading');
+			}
 		}
--	}
+	}
+
+	const activateButton = () => {
+		const  btn = document.querySelector("#appointment-button");
+		btn ? btn.addEventListener('click', showWidget) : void(0);
+	}
 
 	const showWidget = (e) => {
 		document.getElementById('appointment-form').classList.toggle('active');
 		e.currentTarget.classList.toggle('active');
 	}
 
-	window.addEventListener("message", (e)=>{
-		const widgetButton = document.getElementById('appointment-button');
-		//if (event.origin == document.getElementById('SITE_URL').value) {
-		if (e.data === 'activateButton') {
-			if (widgetButton && !widgetButton.classList.contains('on')) {
-
-				widgetButton.addEventListener('click', widgetButtonAction);
-
-				widgetButton.classList.add('on');
-				widgetButton.classList.remove('hidden');
-			}
+	const finalAnimations = () => {
+		const  btn = document.querySelector("#appointment-button");
+		if (btn){
+			btn.removeEventListener('click', showWidget);
+			btn.classList.remove('active');
+			btn.classList.add('success');
 		}
-
-		if (e.data === 'appointmentSuccess') {
-			if (widgetButton) {
-				widgetButton.removeEventListener('click', widgetButtonAction);
-				widgetButton.classList.remove('active');
-				widgetButton.classList.add('success');
-
-				setTimeout(()=>{
-					document.getElementById('appointment-widget').classList.remove('active');
-				}, 4000);
-			}
+		const form = document.getElementById('appointment-form');
+		if (form)
+		{
+			setTimeout(()=>{
+				form.classList.remove('active');
+			}, 4000);
 		}
-		//}else{
-		//maybe some diagnostic message
-		//console.error('Invalid site url');
-		//}
-	});
+	}
 })//DomContentLoaded
 

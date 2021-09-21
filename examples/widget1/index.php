@@ -8,7 +8,7 @@ else{ die("integration library not found"); }
 
 use AlexNzr\BitUmcIntegration\RequestController;
 
-die("Sorry, this page is in development now");
+//die("Sorry, this page is in development now");
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +25,24 @@ die("Sorry, this page is in development now");
 <body>
 
 <div class="appointment-button-wrapper">
-    <button id="appointment-button" class="hidden"></button>
+    <button id="appointment-button"></button>
+    <div class="windows8">
+        <div class="wBall" id="wBall_1">
+            <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_2">
+            <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_3">
+            <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_4">
+            <div class="wInnerBall"></div>
+        </div>
+        <div class="wBall" id="wBall_5">
+            <div class="wInnerBall"></div>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -46,9 +63,9 @@ die("Sorry, this page is in development now");
                 <ul class="appointment-form_head_list selection-item-list" id="employees_list"></ul>
             </div>
 
-            <div class="selection-block hidden" id="appointment-form-shedule" data-step="4">
+            <div class="selection-block hidden" id="appointment-form-schedule" data-step="4">
                 <p class="selection-item-selected">Выберите время *</p>
-                <ul class="appointment-form_head_list selection-item-list" id="shedule_list"></ul>
+                <ul class="appointment-form_head_list selection-item-list" id="schedule_list"></ul>
             </div>
 
             <div class="appointment-form_input-wrapper">
@@ -56,7 +73,7 @@ die("Sorry, this page is in development now");
             </div>
 
             <div class="appointment-form_input-wrapper">
-                <input type="text" class="appointment-form_input" placeholder="Отчество *" id="parentname" maxlength="30" autocomplete="off">
+                <input type="text" class="appointment-form_input" placeholder="Отчество *" id="middleName" maxlength="30" autocomplete="off">
             </div>
 
             <div class="appointment-form_input-wrapper">
@@ -74,14 +91,10 @@ die("Sorry, this page is in development now");
             <div class="appointment-form_submit-wrapper">
                 <button type="submit" id="create_order" class="appointment-form_button">Записаться на приём</button>
             </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="container">
-        <div class="appointment-result-wrapper">
-            <p id="appointment-result"></p>
+            <div class="appointment-result-wrapper">
+                <p id="appointment-result"></p>
+            </div>
         </div>
     </div>
 </div>

@@ -317,15 +317,20 @@ h1,h2,h3,h4,h5,h6,p,label{
 }
 
 /*********************************************************************************/
-.appointment-button-wrapper{
-	opacity: 0;
+
+.appointment-button-wrapper .windows8 {
+	display: none;
+}
+
+.appointment-button-wrapper.loading .windows8{
+	display: block;
+}
+
+.appointment-button-wrapper.loading button {
 	pointer-events: none;
-	transition: .3s;
+	opacity: 0;
 }
-.appointment-button-wrapper.active{
-	opacity: 1;
-	pointer-events: auto;
-}
+
 #appointment-button{
 	display: flex;
 	justify-content: center;
@@ -373,12 +378,10 @@ h1,h2,h3,h4,h5,h6,p,label{
 #appointment-button.active{
 	background: url("../img/cancel.svg") center center/contain no-repeat;
 	box-shadow: 0 0 5px 1px #18538E;
-
-	width: 36px;
 	padding: 0;
 	color: transparent;
 	border-radius: 50%;
-	font-size: .1px;
+	font-size: 0;
 }
 #appointment-button.active:before,
 #appointment-button.active:after{
@@ -389,7 +392,6 @@ h1,h2,h3,h4,h5,h6,p,label{
 #appointment-button.success{
 	background: url("../img/success.svg") center center/contain no-repeat #025ea1;
 	box-shadow: none;
-	width: 36px;
 	padding: 0;
 	color: transparent;
 	border-radius: 50%;
@@ -414,5 +416,110 @@ h1,h2,h3,h4,h5,h6,p,label{
 	#appointment-form{
 		height: calc(80vh - 60px);
 		max-height: calc(80vh - 60px);
+	}
+}
+
+/*-------------------------------------------------*/
+.windows8 {
+	position: fixed;
+	left: 20px;
+	bottom: 20px;
+	width: 50px;
+	height:50px;
+	margin:auto;
+}
+
+.windows8 .wBall {
+	position: absolute;
+	width: 47px;
+	height: 47px;
+	opacity: 0;
+	transform: rotate(225deg);
+	animation: orbit 3.9325s infinite;
+}
+
+.windows8 .wBall .wInnerBall{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: rgb(2,95,161);
+	left:0px;
+	top:0px;
+	border-radius: 6px;
+}
+
+.windows8 #wBall_1 {
+	animation-delay: 0.856s;
+}
+
+.windows8 #wBall_2 {
+	animation-delay: 0.173s;
+}
+
+.windows8 #wBall_3 {
+	animation-delay: 0.3465s;
+}
+
+.windows8 #wBall_4 {
+	animation-delay: 0.5095s;
+}
+
+.windows8 #wBall_5 {
+	animation-delay: 0.693s;
+}
+
+
+
+@keyframes orbit {
+	0% {
+		opacity: 1;
+		z-index:99;
+		transform: rotate(180deg);
+		animation-timing-function: ease-out;
+	}
+
+	7% {
+		opacity: 1;
+		transform: rotate(300deg);
+		animation-timing-function: linear;
+		origin:0%;
+	}
+
+	30% {
+		opacity: 1;
+		transform:rotate(410deg);
+		animation-timing-function: ease-in-out;
+		origin:7%;
+	}
+
+	39% {
+		opacity: 1;
+		transform: rotate(645deg);
+		animation-timing-function: linear;
+		origin:30%;
+	}
+
+	70% {
+		opacity: 1;
+		transform: rotate(770deg);
+		animation-timing-function: ease-out;
+		origin:39%;
+	}
+
+	75% {
+		opacity: 1;
+		transform: rotate(900deg);
+		animation-timing-function: ease-out;
+		origin:70%;
+	}
+
+	76% {
+		opacity: 0;
+		transform:rotate(900deg);
+	}
+
+	100% {
+		opacity: 0;
+		transform: rotate(900deg);
 	}
 }
