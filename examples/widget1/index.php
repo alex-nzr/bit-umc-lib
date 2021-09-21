@@ -4,6 +4,10 @@ if (is_file(realpath('../../vendor/autoload.php')))
 {
     require_once(realpath('../../vendor/autoload.php'));
 }
+elseif (is_file(realpath('../../../../vendor/autoload.php')))
+{
+    require_once(realpath('../../../../vendor/autoload.php'));
+}
 else{ die("integration library not found"); }
 
 use AlexNzr\BitUmcIntegration\RequestController;
