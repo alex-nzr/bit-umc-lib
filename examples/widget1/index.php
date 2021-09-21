@@ -4,9 +4,9 @@ if (is_file(realpath('../../vendor/autoload.php')))
 {
     require_once(realpath('../../vendor/autoload.php'));
 }
-elseif (is_file(realpath('../../../../vendor/autoload.php')))
+elseif (is_file(realpath('../../../../autoload.php')))
 {
-    require_once(realpath('../../../../vendor/autoload.php'));
+    require_once(realpath('../../../../autoload.php'));
 }
 else{ die("integration library not found"); }
 
@@ -28,7 +28,7 @@ use AlexNzr\BitUmcIntegration\RequestController;
 
 <body>
 
-<div class="appointment-button-wrapper">
+<div class="appointment-button-wrapper loading">
     <button id="appointment-button"></button>
     <div class="windows8">
         <div class="wBall" id="wBall_1">
