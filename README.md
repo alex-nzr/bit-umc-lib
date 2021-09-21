@@ -14,7 +14,7 @@ $ php composer.phar install
 ```
 or
 ```
-composer require alex-nzr/bit-umc-integration
+composer require alex-nzr/bit-umc-integration:dev-master
 ```
 
 ### Direct download
