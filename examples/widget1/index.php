@@ -10,9 +10,10 @@ elseif (is_file(realpath('../../../../autoload.php')))
 }
 else{ die("integration library not found"); }
 
-$ajaxPath = substr(realpath('./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT'])+1);
+$ajaxPath = substr(realpath('./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
 $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
-$ajaxPath = "/" . implode("/", $ajaxPath);
+$ajaxPath = implode("/", $ajaxPath);
+$ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
 ?>
 
 <!DOCTYPE html>
