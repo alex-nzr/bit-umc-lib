@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
 	const state = {
 		request: {
 			method: 'POST',
-			url: '/lebgok/examples/widget1/ajax/ajax.php',
+			url: window.ajaxPath,
 			headers: {
 				'Content-Type': 'application/json;charset=utf-8',
 			},

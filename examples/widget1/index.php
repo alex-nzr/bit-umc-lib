@@ -10,6 +10,9 @@ elseif (is_file(realpath('../../../../autoload.php')))
 }
 else{ die("integration library not found"); }
 
+$ajaxPath = substr(realpath('./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
+$ajaxPath = explode("\\", $ajaxPath);
+$ajaxPath = implode("/", $ajaxPath);
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +27,9 @@ else{ die("integration library not found"); }
 </head>
 
 <body>
-
+<script>
+    window.ajaxPath = '<?=$ajaxPath?>';
+</script>
 <div class="appointment-button-wrapper loading">
     <button id="appointment-button"></button>
     <div class="windows8">
