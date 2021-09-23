@@ -14,7 +14,7 @@
         <div class="row">
             <h1 class="gy-5 mx-auto text-center">Образцы фронтенда для интеграции</h1>
             <div class="list-group mx-auto gy-5">
-                <a href="./widget1" class="list-group-item list-group-item-action">Виджет на нативном JS</a>
+                <a href="./widget1" class="list-group-item list-group-item-action">Виджет №1</a>
                 <a href="./typicalForm" class="list-group-item list-group-item-action">Простая форма записи</a>
             </div>
         </div>

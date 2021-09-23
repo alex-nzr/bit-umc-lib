@@ -10,9 +10,6 @@ elseif (is_file(realpath('../../../../autoload.php')))
 }
 else{ die("integration library not found"); }
 
-use AlexNzr\BitUmcIntegration\RequestController;
-
-//die("Sorry, this page is in development now");
 ?>
 
 <!DOCTYPE html>

@@ -82,7 +82,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
 		})
 
 		sbmtBtn.addEventListener('click', (e) => {
-			document.getElementById('appointment-form').classList.add('off');
+			const form = document.getElementById('appointment-form');
+			if (form){
+				form.classList.add('off');
+			}
 			return createOrder(state.selected, e.currentTarget);
 		})
 	}//form treatment

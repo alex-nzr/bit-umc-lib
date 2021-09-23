@@ -23,8 +23,8 @@ if (!empty($_POST["action"])){
     if (is_string($data)){
         $data = json_decode($data, true);
         $resText = $data['success'] ? "Order was created successfully" : $data['error'];
-        //Utils::print($data);
     }
+    //Utils::print($data);
 }else{
     $clinics = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListClinics"])), true);
     if (!empty($clinics["error"]))
@@ -35,7 +35,6 @@ if (!empty($_POST["action"])){
     $schedule = json_decode(RequestController::sendRequest(json_encode(["action" => "GetSchedule"])), true);
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -141,16 +140,16 @@ if (!empty($_POST["action"])){
         const schedule = JSON.parse('<?=json_encode($schedule)?>');
         if (!schedule.error){
             const clinic = document.querySelector('select[name="clinicUid"]');
-            clinic.addEventListener("change", (e) => {
+            clinic && clinic.addEventListener("change", (e) => {
                 changeScheduleData(e.target.value);
             })
 
             const specialty = document.querySelector('select[name="specialty"]');
-            specialty.addEventListener("change", (e) => {
+            specialty && specialty.addEventListener("change", (e) => {
                 changeScheduleData(clinic.value, e.target.value);
             })
             const ref = document.querySelector('select[name="refUid"]');
-            ref.addEventListener("change", (e) => {
+            ref && ref.addEventListener("change", (e) => {
                 changeScheduleData(clinic.value, specialty.value, e.target.value, schedule);
             })
         }

@@ -9,7 +9,7 @@ Set up `composer.json` in your project directory:
 ```
 
 Run [composer](https://getcomposer.org/doc/00-intro.md#installation):
-```sh
+```
 $ php composer.phar install
 ```
 or
@@ -374,6 +374,13 @@ $result = RequestController::sendRequest(json_encode([
 ]));
 ```
 
+
+## Demo mode
+You can switch demo mode by changing special constant value in `src/Variables.php`. Set `"Y"` to turn on, set `"N"`, to turn off.
+When the demo mode is enabled, the application will not make requests to 1C, but will return json data from the class 'src/RequestServiceDemo.php`
+```
+   const DEMO_MODE = "Y"; 
+```
 
 ## Examples
 Also, you can see the [examples](https://github.com/alex-nzr/bit-umc-lib/tree/master/examples)
