@@ -12,13 +12,14 @@
     background: #18538E;
     border-radius: 10px;
 }
+html{
+    scroll-behavior: smooth;
+}
 body{
 	overflow-x: hidden;
 	overflow-y: scroll;
-	scroll-behavior: smooth;
 	-webkit-overflow-scrolling: touch;
 	min-height: 100vh;
-	height: 605px;
 	font-family: Roboto, sans-serif;
 	font-style: normal;
 	font-size: 14px;
@@ -48,8 +49,8 @@ h1,h2,h3,h4,h5,h6,p,label{
 }
 @media (max-width: 768px){
 	body{
-		min-height: 0vh;
-		height: 100%;
+		/*min-height: 0vh;
+		height: 100%;*/
 	}
 }
 
@@ -59,12 +60,12 @@ h1,h2,h3,h4,h5,h6,p,label{
 	left: 35px;
 	bottom: 40px;
 	width: 300px;
-	height: 605px;
+	/height: 605px;
 	padding: 20px 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	max-height: calc(100vh - 20px);
+	/max-height: calc(100vh - 20px);
 	background: #025ea1;
 	overflow-y: scroll;
 	box-shadow: 0 0 5px 1px #025ea1;
@@ -414,8 +415,8 @@ h1,h2,h3,h4,h5,h6,p,label{
 }
 @media (max-width: 768px){
 	#appointment-form{
-		height: calc(80vh - 60px);
-		max-height: calc(80vh - 60px);
+		/height: calc(80vh - 60px);
+		/max-height: calc(80vh - 60px);
 	}
 }
 

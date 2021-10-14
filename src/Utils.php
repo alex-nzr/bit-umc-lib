@@ -71,7 +71,7 @@ class Utils{
         ];
     }
 
-    /** clean request params
+    /** check required order params
      * @param array $params
      * @return bool
      */
@@ -87,7 +87,7 @@ class Utils{
         return $isValid;
     }
 
-    /** phone number formatting
+    /** formatting date for 1c 
      * @param string $dateString
      * @param bool $withTime
      * @return string
