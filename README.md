@@ -58,6 +58,7 @@ Success response data(json)
         "birthday": "10-04-1967",
         "gender": "M",
         "uid": "d4f6fdf5-38a6-11e4-8012-20cf3029e98b",
+        "isAppointmentBlocked": "N",
         "contacts": {
             "phone": "+71234567890",
             "email": "example@gmail.com"
@@ -385,6 +386,95 @@ When the demo mode is enabled, the application will not make requests to 1C, but
 ## Examples
 Also, you can see the [examples](https://github.com/alex-nzr/bit-umc-lib/tree/master/examples)
 
+## 1C features
+Added a form with settings in the section `"Administration"->"Services"->"Site integration"`. 
+Also added the ability to connect to the site from 1C and send customer data. 
+On the form of the element in the catalog "Clients", a section "Integration with the site" has been created. 
+This section has some features:
+1. Button "Create PA" and a checkbox showing whether the personal account has already been created earlier. 
+    When you click on the button, the client's data is sent to the site and, in case of a successful response, checkbox is put down that the profile has been created.
+2. "isAppointmentBlocked" checkbox has also been added. Depending on its value, you can prohibit or allow an appointment from the site by implementing your own logic.
+3. Button "Recover Password". It makes request to your site with special action and you can process this event  by implementing your own logic.
+4. On the integration settings form, you can
+   a) enable/disable sending of user's personal data. When this option is enabled, all fields specified in the method of receiving clients will be sent. If the option is disabled, only the name and SNILS will be transmitted.
+   b) enable/disable the transfer of authorization data to the site. Authorization is implemented through the request header "Authorization: Basic".
+   c) enable/disable automatic transfer of client data to the site when changing and saving client data in 1C.
+
+The request and response formats:
+ 
+From 1C (format: json, method: POST)  
+```
+ {
+    "action" : "user.add", //or "user.update", or "user.recoverPassword"
+    "client" : {
+        "name": "Аркадий",
+        "surname": "Ахмин",
+        "middlename": "Николаевич",
+        "inn": "1211321231",
+        "snils": "030-213132121",
+        "birthday": "10-04-1967",
+        "gender": "M",
+        "uid": "d4f6fdf5-38a6-11e4-8012-20cf3029e98b",
+        "isAppointmentBlocked": "N",
+        "isNew" => "Y", //if user is new and need be created
+        "recoverPassword" => "Y", //need to recover user's password and return it
+        "contacts": {
+            "phone": "+71234567890",
+            "email": "example@gmail.com"
+        }
+    }
+ }   
+```
+
+Expected response(json)
+```
+{
+    "success": true, //required if response is success. Otherwise there must be an "error" key
+    "site" => "site.ru", //not required
+    "login": "+71234567890", //required on "user.add" and "user.recoverPassword" requests
+    "password": "1asdWQdsWpA#!9", //required on "user.add" and "user.recoverPassword" requests
+    "info": "The password is valid for 24 hours" //not required
+}
+```
+or
+```
+{
+    "error": "something went wrong..."
+}
+```
+
+Php code example
+```
+$postData = trim(file_get_contents("php://input"));
+if (!empty($postData))
+{
+    $data = json_decode($postData);
+    switch($data['action']){
+        case 'user.add':
+            $login = $data['contacts']['phone'];
+            $password = mt_rand();
+            //create user in your site DB
+            echo json_encode([
+                "success" => true,
+                "site" => "mysite.com",
+                "login" => $login,
+                "password" => $password,
+                "info" => "Don't forget to change your password after first logging in"
+            ]);    
+            break;
+        case 'user.update':
+            //to do something
+            break;
+        case 'user.recoverPassword':
+            //to do something
+            break;
+        default:
+            echo json_encode(["error" => "Uncknown action"]);    
+    } 
+}
+```
+
+Please note that you need to write the reception and processing of data on the site side yourself, since it depends only on your tasks and the architecture of the project.
 
 ## Contributing ##
 

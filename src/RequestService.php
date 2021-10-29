@@ -35,8 +35,8 @@ class RequestService{
                         $clients[$key]["contacts"]["phone"] = Utils::formatPhone($client["contacts"]["phone"]);
                     }
                 }
-                $data = $clients;
             }
+            $data = $clients;
         }
 
         return json_encode($data);
