@@ -378,9 +378,15 @@ $result = RequestController::sendRequest(json_encode([
 
 ## Demo mode
 You can switch demo mode by changing special constant value in `src/Variables.php`. Set `"Y"` to turn on, set `"N"`, to turn off.
-When the demo mode is enabled, the application will not make requests to 1C, but will return json data from the class 'src/RequestServiceDemo.php`
+When the demo mode is enabled, the application will not make requests to 1C, but will return json data from the class `src/RequestServiceDemo.php`
 ```
    const DEMO_MODE = "Y"; 
+```
+
+## Logging
+You can print logs to screen with `Utils::print($message)` or print to file `with Utils::logToFile($message)`. Path ti log's file you can set in Variables.php:
+```
+const PATH_TO_LOG_FILE = __DIR__"/log.txt";
 ```
 
 ## Examples
@@ -448,10 +454,10 @@ Php code example
 $postData = trim(file_get_contents("php://input"));
 if (!empty($postData))
 {
-    $data = json_decode($postData);
+    $data = json_decode($postData, true);
     switch($data['action']){
         case 'user.add':
-            $login = $data['contacts']['phone'];
+            $login = $data['client']['contacts']['phone'];
             $password = mt_rand();
             //create user in your site DB
             echo json_encode([

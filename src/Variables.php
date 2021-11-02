@@ -39,6 +39,8 @@ class Variables
     const UNAUTHORIZED_USER_PHONE = "+70000000000";
     const UNAUTHORIZED_USER_UID = "84291ec6-161a-11ec-9bc2-c03eba27318f";
 
+    const PATH_TO_LOG_FILE = __DIR__"/log.txt";
+
 	const SEP = '/';
     const D_SEP = '//';
     const COLON = ':';

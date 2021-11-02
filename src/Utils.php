@@ -126,7 +126,7 @@ class Utils{
     {
         $log = print_r($data, true);
         file_put_contents(
-            __DIR__."/log.txt",
+            Variables::PATH_TO_LOG_FILE,
             $log . PHP_EOL,
             FILE_APPEND
         );
