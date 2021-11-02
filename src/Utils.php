@@ -119,6 +119,19 @@ class Utils{
         echo "</pre>";
     }
 
+    /** prints param to file
+     * @param $data
+     */
+    public static function printLog($data): void
+    {
+        $log = print_r($data, true);
+        file_put_contents(
+            __DIR__."/log.txt",
+            $log . PHP_EOL,
+            FILE_APPEND
+        );
+    }
+
     /** Tests if an array is associative or not.
      * @param array array to check
      * @return boolean
