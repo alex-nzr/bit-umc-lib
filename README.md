@@ -386,7 +386,7 @@ When the demo mode is enabled, the application will not make requests to 1C, but
 ## Logging
 You can print logs to screen with `Utils::print($message)` or print to file `with Utils::logToFile($message)`. Path ti log's file you can set in Variables.php:
 ```
-const PATH_TO_LOG_FILE = __DIR__"/log.txt";
+const PATH_TO_LOG_FILE = __DIR__."/log.txt";
 ```
 
 ## Examples
