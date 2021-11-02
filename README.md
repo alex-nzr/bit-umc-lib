@@ -469,7 +469,7 @@ if (!empty($postData))
             //to do something
             break;
         default:
-            echo json_encode(["error" => "Uncknown action"]);    
+            echo json_encode(["error" => "Unknown action"]);    
     } 
 }
 ```
