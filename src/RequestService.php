@@ -56,16 +56,16 @@ class RequestService{
                 foreach ($orders as $key => $order)
                 {
                     if (!empty($order["orderDate"])){
-                        $orders[$key]["orderDate"] = date("d-m-Y", strtotime($order["orderDate"]));
+                        $orders[$key]["displayOrderDate"] = date("d-m-Y", strtotime($order["orderDate"]));
                     }
                     if (!empty($order["timeBegin"])){
-                        $orders[$key]["timeBegin"] = date("H:i", strtotime($order["timeBegin"]));
+                        $orders[$key]["displayTimeBegin"] = date("H:i", strtotime($order["timeBegin"]));
                     }
                     if (!empty($order["timeEnd"])){
-                        $orders[$key]["timeEnd"] = date("H:i", strtotime($order["timeEnd"]));
+                        $orders[$key]["displayTimeEnd"] = date("H:i", strtotime($order["timeEnd"]));
                     }
                     if (!empty($order["clientBirthday"])){
-                        $orders[$key]["clientBirthday"] = date("d-m-Y", strtotime($order["clientBirthday"]));
+                        $orders[$key]["displayClientBirthday"] = date("d-m-Y", strtotime($order["clientBirthday"]));
                     }
 
                     $data = $orders;

@@ -229,11 +229,15 @@ $schedule = RequestController::sendRequest(json_encode(["action" => "GetSchedule
 ```
 
 ### Get user orders
+"getChanges" is optionally parameter, default value is `false`.
+All synchronized orders are stored in the information register, and if you switch the value to `true`, only orders that are not in the register will be given on request.
+
 Request data(json)
 ```
 {
     "action": "GetListOrders",
-    "clientUid": "84291ec6-161a-11ec-9bc2-c03eba27318f"
+    "clientUid": "84291ec6-161a-11ec-9bc2-c03eba27318f",
+    "getChanges": false,
 }
 ```
 
@@ -243,16 +247,20 @@ Success response data(json)
     {
         "orderUid": "01fa3622-16f1-11ec-9bc2-c03eba27318f",
         "orderNumber": "00000001098",
-        "orderDate": "25-09-2021",
-        "timeBegin": "09:00",
-        "timeEnd": "13:00",
+        "orderDate": "2021-09-25T00:00:00"
+        "timeBegin": "2021-09-25T14:00:00"
+        "timeEnd": "2021-09-25T14:30:00"
+        "displayOrderDate": "25-09-2021",
+        "displayTimeBegin": "14:00",
+        "displayTimeEnd": "14:30",
         "orderState": "Создана на сайте",
         "orderNote": "Some text about this order",
         "clinicName": "Третий хирургический центр",
         "doctorName": "Безногов Юрий Сергеевич",
         "doctorSpecialty": "Хирургия",
         "clientName": "Иванов И.И.",
-        "clientBirthday": "01-01-1970",
+        "clientBirthday": "1984-12-22T00:00:00",
+        "displayClientBirthday": "22-12-1984",
         "clientComment": "not used, see orderNote"
     }
 ]
@@ -288,18 +296,21 @@ UNAUTHORIZED_USER_PHONE`
 If param `orderUid` not empty, 1c will update already existing order.
 
 `refUid` - doctor or cabinet uuid from schedule
+
+"email", "comment" and "address" are not required params.
+"clientUid" and "orderUid" influence  the logic of saving the document in 1C
 ```
 {
-    "action"*: "CreateOrder"/"CreateOrderUnauthorized",
-    "clinicUid"*: "f679444a-22b7-11df-8618-002618dcef2c"
-    "refUid"*: "9e8b672a-9975-11e3-87ec-002618dcef2c"
-    "orderDate"*: "2021-09-20T00:00:00"
-    "timeBegin"*: "2021-09-20T14:00:00"
-    "timeEnd"*: "2021-09-20T18:00:00"
-    "name"*: "Игорь" 
-    "surname"*: "Васильевич" 
-    "middleName"*: "Нариманов"
-    "phone"*: "8 (999) 555-55-55"
+    "action": "CreateOrder"/"CreateOrderUnauthorized",
+    "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c"
+    "refUid": "9e8b672a-9975-11e3-87ec-002618dcef2c"
+    "orderDate": "2021-09-20T00:00:00"
+    "timeBegin": "2021-09-20T14:00:00"
+    "timeEnd": "2021-09-20T18:00:00"
+    "name": "Игорь" 
+    "surname": "Васильевич" 
+    "middleName": "Нариманов"
+    "phone": "8 (999) 555-55-55"
     "email": "igor12121@gmail.com"
     "comment": "Какой-то текст комментария"
     "address": "г. Москва, ул. Пушкина 56"
@@ -345,11 +356,14 @@ $result = RequestController::sendRequest(json_encode([
 ```
 
 ### Canceling order
+"reason" is not required param
+
 Request data(json)
 ```
 {
     "action": "CancelOrder",
-    "orderUid": "84291ec6-161a-11ec-9bc2-c03eba27318f"
+    "orderUid": "84291ec6-161a-11ec-9bc2-c03eba27318f",
+    "reason": "I don't want to visit your clinic",
 }
 ```
 
@@ -384,7 +398,7 @@ When the demo mode is enabled, the application will not make requests to 1C, but
 ```
 
 ## Logging
-You can print logs to screen with `Utils::print($message)` or print to file `with Utils::logToFile($message)`. Path ti log's file you can set in Variables.php:
+You can print logs to screen with `Utils::print($message)` or print to file `with Utils::printLog($message)`. Path to log's file you can set in Variables.php:
 ```
 const PATH_TO_LOG_FILE = __DIR__."/log.txt";
 ```
