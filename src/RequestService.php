@@ -95,26 +95,15 @@ class RequestService{
     public static function getListClinics(): string
     {
         $data = json_decode(self::post("GetListClinics"), true);
-        $clinics = $data["СписокКлиник"]["Клиника"];
-        if (!empty($clinics) && empty($data["error"]))
+        $clinics = $data["clinics"];
+        if (empty($data["error"]) && is_array($clinics))
         {
-            if (is_array($clinics)){
-                if (Utils::is_assoc($clinics))
-                {
-                    $clinics = array($clinics);
-                }
-                $newData = [];
-                foreach ($clinics as $key => $clinic)
-                {
-                    if (isset($clinic["УИД"])){
-                        $newData[$key]["uid"] = $clinic["УИД"];
-                    }
-                    if (isset($clinic["Наименование"])){
-                        $newData[$key]["name"] = $clinic["Наименование"];
-                    }
-                }
-                $data = $newData;
+            foreach ($clinics as $key => $clinic)
+            {
+                    $clinics[$key]["uid"] = trim($clinic["uid"]);
+                    $clinics[$key]["name"] = trim($clinic["name"]);
             }
+            $data = $clinics;
         }
         return json_encode($data);
     }
