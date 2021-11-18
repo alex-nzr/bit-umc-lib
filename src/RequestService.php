@@ -30,10 +30,22 @@ class RequestService{
 
                 if (is_array($client["contacts"]))
                 {
-                    if (!empty($client["contacts"]["phone"]))
-                    {
-                        $clients[$key]["contacts"]["phone"] = Utils::formatPhone($client["contacts"]["phone"]);
+                    foreach($client['contacts'] as $contactType => $contactValue){
+                        if ($contactType === "phone")
+                        {
+                            $clients[$key]["contacts"]["phone"] = Utils::formatPhone($contactValue);
+                        }
+                        else
+                        {
+                            $clients[$key]["contacts"][$contactType] = trim($contactValue);
+                        }
                     }
+                }
+
+                foreach ($client as $param => $value){
+                    if (is_string($value)){
+                        $clients[$key][$param] = trim($value);       
+                    }    
                 }
             }
             $data = $clients;
