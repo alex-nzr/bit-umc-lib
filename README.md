@@ -61,7 +61,8 @@ Success response data(json)
         "isAppointmentBlocked": "N",
         "contacts": {
             "phone": "+71234567890",
-            "email": "example@gmail.com"
+            "emailHome": "example_home@gmail.com"
+            "emailWork": "example_work@gmail.com"
         }
     }
 ]
