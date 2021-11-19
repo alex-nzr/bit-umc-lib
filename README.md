@@ -486,7 +486,8 @@ From 1C (format: json, method: POST)
         "recoverPassword" => "Y", //need to recover user's password and return it
         "contacts": {
             "phone": "+71234567890",
-            "email": "example@gmail.com"
+            "emailHome": "home@gmail.com",
+            "emailWork": "work@gmail.com",
         }
     }
  }   
