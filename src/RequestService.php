@@ -2,15 +2,15 @@
 namespace AlexNzr\BitUmcIntegration;
 
 class RequestService{
-	
-	private static string $baseurl = Variables::PROTOCOL . Variables::COLON . Variables::D_SEP .
-                                     Variables::BASE_ADDR . Variables::SEP .
-                                     Variables::BASE_NAME . Variables::SEP .
-                                     Variables::HTTP_SERVICE_PREFIX . Variables::SEP .
-                                     Variables::HTTP_SERVICE_NAME . Variables::SEP .
-                                     Variables::HTTP_SERVICE_API_VERSION . Variables::SEP;
 
-	protected function __construct(){}
+    private static string $baseurl = Variables::PROTOCOL . Variables::COLON . Variables::D_SEP .
+    Variables::BASE_ADDR . Variables::SEP .
+    Variables::BASE_NAME . Variables::SEP .
+    Variables::HTTP_SERVICE_PREFIX . Variables::SEP .
+    Variables::HTTP_SERVICE_NAME . Variables::SEP .
+    Variables::HTTP_SERVICE_API_VERSION . Variables::SEP;
+
+    protected function __construct(){}
 
     /** get list of clients in json
      * @return string
@@ -44,8 +44,8 @@ class RequestService{
 
                 foreach ($client as $param => $value){
                     if (is_string($value)){
-                        $clients[$key][$param] = trim($value);       
-                    }    
+                        $clients[$key][$param] = trim($value);
+                    }
                 }
             }
             $data = $clients;
@@ -100,8 +100,8 @@ class RequestService{
         {
             foreach ($clinics as $key => $clinic)
             {
-                    $clinics[$key]["uid"] = trim($clinic["uid"]);
-                    $clinics[$key]["name"] = trim($clinic["name"]);
+                $clinics[$key]["uid"] = trim($clinic["uid"]);
+                $clinics[$key]["name"] = trim($clinic["name"]);
             }
             $data = $clinics;
         }
@@ -192,14 +192,14 @@ class RequestService{
                     if (isset($item["ДлительностьПриема"])){
                         $formattedSchedule[$key]["duration"] = $item["ДлительностьПриема"];
                         $duration = intval(date("H", strtotime($item["ДлительностьПриема"]))) * 3600
-                                    + intval(date("i", strtotime($item["ДлительностьПриема"]))) * 60;
+                            + intval(date("i", strtotime($item["ДлительностьПриема"]))) * 60;
                         $formattedSchedule[$key]["durationInSeconds"] = $duration;
                     }
 
                     $freeTime = is_array($item["ПериодыГрафика"]["СвободноеВремя"])
-                                ? $item["ПериодыГрафика"]["СвободноеВремя"]["ПериодГрафика"] : [];
+                        ? $item["ПериодыГрафика"]["СвободноеВремя"]["ПериодГрафика"] : [];
                     $busyTime = is_array($item["ПериодыГрафика"]["ЗанятоеВремя"])
-                                ? $item["ПериодыГрафика"]["ЗанятоеВремя"]["ПериодГрафика"] : [];
+                        ? $item["ПериодыГрафика"]["ЗанятоеВремя"]["ПериодГрафика"] : [];
                     if (Utils::is_assoc($freeTime)) {
                         $freeTime = array($freeTime);
                     }
@@ -235,9 +235,9 @@ class RequestService{
             if ($unauthorized)
             {
                 $params["comment"] =    $params['name'] . " "
-                                        . $params['middleName'] . " "
-                                        . $params['surname'] . "\n"
-                                        . $params['phone'] ."\n". $params["comment"];
+                    . $params['middleName'] . " "
+                    . $params['surname'] . "\n"
+                    . $params['phone'] ."\n". $params["comment"];
 
                 $params['name'] = Variables::UNAUTHORIZED_USER_NAME;
                 $params['middleName'] = Variables::UNAUTHORIZED_USER_MIDDLE_NAME;
@@ -262,14 +262,41 @@ class RequestService{
         }
     }
 
+    /** make request to update client's data
+     * @param array $params
+     * @return string
+     */
+    public static function updateClient(array $params): string
+    {
+        if (!empty($params["clientUid"]))
+        {
+            foreach ($params as $key => $value) {
+                switch ($key){
+                    case "name":
+                    case "surname":
+                    case "middlename":
+                    case "emailHome":
+                    case "emailWork":
+                        $params[$key] = trim($value);
+                        break;
+                    case "phone":
+                        $params["phone"] = Utils::formatPhone($value);
+                        break;
+                }
+            }
+            return self::post('UpdateClient', $params);
+        }
+        return Utils::addError('"clientUid" is necessary to update client data');
+    }
+
     /** send request to 1C database
      * @param string $method
      * @param array $params
      * @return string
      */
-	protected static function post(string $method, array $params = []): string
+    protected static function post(string $method, array $params = []): string
     {
-		$requestUrl = self::$baseurl . $method;
+        $requestUrl = self::$baseurl . $method;
 
         if($curl = curl_init())
         {
@@ -310,14 +337,14 @@ class RequestService{
         }else{
             return Utils::addError('Connection init error');
         }
-	}
+    }
 
     /** checking the validity of the json
      * @param $string
      * @return bool
      */
-	private static function isJSON($string): bool
+    private static function isJSON($string): bool
     {
-	    return is_string($string) && (is_object(json_decode($string)) || is_array(json_decode($string, true)));
-	}
+        return is_string($string) && (is_object(json_decode($string)) || is_array(json_decode($string, true)));
+    }
 }

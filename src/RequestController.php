@@ -62,6 +62,9 @@ class RequestController{
             case "CancelOrder":
                 $response = RequestService::cancelOrder($data);
                 break;
+            case "UpdateClient":
+                $response = RequestService::updateClient($data);
+                break;
             default:
                 $response = Utils::addError('Unknown action - '.$action);
                 break;

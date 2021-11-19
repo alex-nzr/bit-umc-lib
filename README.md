@@ -80,6 +80,51 @@ Php code example
 $clients = RequestController::sendRequest(json_encode(["action" => "GetListClients"]));
 ```
 
+### Update client in 1C
+Request data(json) 
+"action" and "clientUid" are required fields
+```
+{
+    "action": "UpdateClient",
+    "clientUid": "d4f6fdf5-38a6-11e4-8012-20cf3029e98b",
+    "name": "Аркадий",
+    "surname": "Ахмин",
+    "middlename": "Николаевич",
+    "phone": "+71234567890",
+    "emailHome": "example_home@gmail.com",
+    "emailWork": "example_work@gmail.com"
+}
+```
+
+Success response data(json)
+```
+{
+    "success": true
+}
+```
+
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
+Php code example
+```
+$res = RequestController::sendRequest(json_encode([
+    "action"     => "UpdateClient",
+    "clientUid"  => "d4f6fdf5-38a6-11e4-8012-20cf3029e98b",
+    "name"       => "Аркадий",
+    "surname"    => "Ахмин",
+    "middlename" => "Николаевич",
+    "phone"      => "+71234567890",
+    "emailHome"  => "example_home@gmail.com",
+    "emailWork"  => "example_work@gmail.com"
+]));
+```
+
+
 ### Get all clinics
 Request data(json)
 ```
