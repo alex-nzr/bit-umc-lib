@@ -307,7 +307,8 @@ Success response data(json)
         "clientName": "Иванов И.И.",
         "clientBirthday": "1984-12-22T00:00:00",
         "displayClientBirthday": "22-12-1984",
-        "clientComment": "not used, see orderNote"
+        "clientComment": "not used, see orderNote",
+        "cancelled": "N",
     }
 ]
 ```

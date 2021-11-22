@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<MetaDataObject xmlns="http://v8.1c.ru/8.3/MDClasses" xmlns:app="http://v8.1c.ru/8.2/managed-application/core" xmlns:cfg="http://v8.1c.ru/8.1/data/enterprise/current-config" xmlns:cmi="http://v8.1c.ru/8.2/managed-application/cmi" xmlns:ent="http://v8.1c.ru/8.1/data/enterprise" xmlns:lf="http://v8.1c.ru/8.2/managed-application/logform" xmlns:style="http://v8.1c.ru/8.1/data/ui/style" xmlns:sys="http://v8.1c.ru/8.1/data/ui/fonts/system" xmlns:v8="http://v8.1c.ru/8.1/data/core" xmlns:v8ui="http://v8.1c.ru/8.1/data/ui" xmlns:web="http://v8.1c.ru/8.1/data/ui/colors/web" xmlns:win="http://v8.1c.ru/8.1/data/ui/colors/windows" xmlns:xen="http://v8.1c.ru/8.3/xcf/enums" xmlns:xpr="http://v8.1c.ru/8.3/xcf/predef" xmlns:xr="http://v8.1c.ru/8.3/xcf/readable" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.12">
+	<Catalog uuid="d304a99e-9928-47e4-af1f-5245005e9566">
+		<InternalInfo>
+			<xr:GeneratedType name="CatalogObject.ВидыСостоянийЗаявок" category="Object">
+				<xr:TypeId>a60c12a8-f1be-4f42-809b-d6a0c3ba00af</xr:TypeId>
+				<xr:ValueId>9df3dc42-e243-4401-aff1-c128ec5fcbbc</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogRef.ВидыСостоянийЗаявок" category="Ref">
+				<xr:TypeId>01471c44-615e-476c-bf65-6ec58af586c6</xr:TypeId>
+				<xr:ValueId>3c1803f4-817d-4e77-8dd8-a64860db6f9a</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogSelection.ВидыСостоянийЗаявок" category="Selection">
+				<xr:TypeId>c2f84f3c-0104-4039-afbd-d3d20b309900</xr:TypeId>
+				<xr:ValueId>119306cd-8955-4420-8258-5eedfb24174a</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogList.ВидыСостоянийЗаявок" category="List">
+				<xr:TypeId>deedd295-5fb9-417f-92d7-7f0c9cd95150</xr:TypeId>
+				<xr:ValueId>a1cf7080-fd0a-455a-96fe-7014293b5cfd</xr:ValueId>
+			</xr:GeneratedType>
+			<xr:GeneratedType name="CatalogManager.ВидыСостоянийЗаявок" category="Manager">
+				<xr:TypeId>d7cf7377-259b-43e0-9ebd-65f407e7c51a</xr:TypeId>
+				<xr:ValueId>3fad8de2-aa54-4c0d-a2af-3017f6968c59</xr:ValueId>
+			</xr:GeneratedType>
+		</InternalInfo>
+		<Properties>
+			<Name>ВидыСостоянийЗаявок</Name>
+			<Comment/>
+			<ObjectBelonging>Adopted</ObjectBelonging>
+			<ExtendedConfigurationObject>d71a3a1e-6cab-40fe-80fa-d1d48e1222c6</ExtendedConfigurationObject>
+		</Properties>
+		<ChildObjects/>
+	</Catalog>
+</MetaDataObject>
