@@ -1,6 +1,7 @@
 <?php
 
-if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) )
+if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) 
+    && !is_file(realpath(__DIR__ . '/../../../../vendor/autoload.php')))
 {
     echo '<script>console.error("Autoloader not found");</script>';
 }
