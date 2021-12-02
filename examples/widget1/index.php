@@ -7,7 +7,7 @@ if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php'))
 }
 else
 {
-    $ajaxPath = substr(realpath(__DIR__.'./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
+    $ajaxPath = substr(realpath(__DIR__.'/ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
     $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
     $ajaxPath = implode("/", $ajaxPath);
     $ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
