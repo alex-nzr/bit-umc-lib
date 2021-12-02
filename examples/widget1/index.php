@@ -1,7 +1,7 @@
 <?php
 
 if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) 
-    && !is_file(realpath(__DIR__ . '/../../../../vendor/autoload.php')))
+    && !is_file(realpath(__DIR__ . '/../../../../../vendor/autoload.php')))
 {
     echo '<script>console.error("Autoloader not found");</script>';
 }
@@ -11,9 +11,14 @@ else
     $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
     $ajaxPath = implode("/", $ajaxPath);
     $ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
-    $styleRealPath = realpath(__DIR__.'./assets/css/style.css');
+
+    $styleRealPath = realpath(__DIR__.'/assets/css/style.css');
+    
     $styleHref = substr($styleRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
-    $scriptSrc = substr(realpath(__DIR__.'./assets/js/script.js'), strlen($_SERVER['DOCUMENT_ROOT']));
+    $styleHref = $styleHref[0] === DIRECTORY_SEPARATOR ? $styleHref : DIRECTORY_SEPARATOR . $styleHref;
+
+    $scriptSrc = substr(realpath(__DIR__.'/assets/js/script.js'), strlen($_SERVER['DOCUMENT_ROOT']));
+    $scriptSrc = $scriptSrc[0] === DIRECTORY_SEPARATOR ? $scriptSrc : DIRECTORY_SEPARATOR . $scriptSrc;
 
     $wrapperId = "appointment-widget-wrapper";
     $widgetBtnWrapId = "appointment-button-wrapper";

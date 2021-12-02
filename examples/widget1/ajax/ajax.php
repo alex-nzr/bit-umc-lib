@@ -3,8 +3,8 @@ if (is_file(realpath(__DIR__ . '/../../../vendor/autoload.php')))
 {
     require_once(realpath(__DIR__ . '/../../../vendor/autoload.php'));
 }
-elseif(is_file(realpath(__DIR__ . '/../../../../../vendor/autoload.php'))){
-    require_once(realpath(__DIR__ . '/../../../../../vendor/autoload.php'));
+elseif(is_file(realpath(__DIR__ . '/../../../../../../vendor/autoload.php'))){
+    require_once(realpath(__DIR__ . '/../../../../../../vendor/autoload.php'));
 }
 
 use AlexNzr\BitUmcIntegration\RequestController;
