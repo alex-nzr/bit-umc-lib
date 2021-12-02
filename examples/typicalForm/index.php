@@ -1,12 +1,7 @@
 <?php
-
-if (is_file(realpath('../../vendor/autoload.php')))
+if (is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) )
 {
-    require_once(realpath('../../vendor/autoload.php'));
-}
-elseif (is_file(realpath('../../../../autoload.php')))
-{
-    require_once(realpath('../../../../autoload.php'));
+    require_once(realpath(__DIR__ . '/../../vendor/autoload.php'));
 }
 else{ die("integration library not found"); }
 

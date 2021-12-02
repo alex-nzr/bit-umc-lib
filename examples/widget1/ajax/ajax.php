@@ -1,12 +1,5 @@
 <?php
-if (is_file(realpath('../../../vendor/autoload.php')))
-{
-    require_once(realpath('../../../vendor/autoload.php'));
-}
-elseif (is_file(realpath('../../../../../autoload.php')))
-{
-    require_once(realpath('../../../../../autoload.php'));
-}
+require_once(__DIR__ . '/../../../vendor/autoload.php');
 
 use AlexNzr\BitUmcIntegration\RequestController;
 use AlexNzr\BitUmcIntegration\Utils;

@@ -1,111 +1,176 @@
 <?php
 
-if (is_file(realpath('../../vendor/autoload.php')))
+if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) )
 {
-    require_once(realpath('../../vendor/autoload.php'));
+    echo '<script>console.error("Autoloader not found");</script>';
 }
-elseif (is_file(realpath('../../../../autoload.php')))
+else
 {
-    require_once(realpath('../../../../autoload.php'));
-}
-else{ die("integration library not found"); }
+    $ajaxPath = substr(realpath(__DIR__.'./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
+    $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
+    $ajaxPath = implode("/", $ajaxPath);
+    $ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
+    $styleRealPath = realpath(__DIR__.'./assets/css/style.css');
+    $styleHref = substr($styleRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
+    $scriptSrc = substr(realpath(__DIR__.'./assets/js/script.js'), strlen($_SERVER['DOCUMENT_ROOT']));
 
-$ajaxPath = substr(realpath('./ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
-$ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
-$ajaxPath = implode("/", $ajaxPath);
-$ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
+    $wrapperId = "appointment-widget-wrapper";
+    $widgetBtnWrapId = "appointment-button-wrapper";
+    $widgetBtnId = "appointment-button";
+    $formId = 'appointment-form';
+    $messageNodeId = 'appointment-form-message';
+    $submitBtnId = "appointment-form-button";
+    $appResultBlockId = "appointment-result-block";
+
+    $nameInputId = "appointment-form-name";
+    $middleNameInputId = "appointment-form-middleName";
+    $surnameInputId = "appointment-form-surname";
+    $phoneInputId = "appointment-form-phone";
+    $commentInputId = "appointment-form-comment";
+
+    $clinicsKey = "FILIAL";
+    $specialtiesKey = "SPECIALTY";
+    $employeesKey = "DOCTOR";
+    $scheduleKey = "DATE_TIME";
+
+    $blocksInfo = [
+        $clinicsKey => "Выберите клинику",
+        $specialtiesKey => "Выберите специализацию",
+        $employeesKey => "Выберите врача",
+        $scheduleKey => "Выберите время"
+    ];
+?>
+<link rel="stylesheet" href="<?=$styleHref?>?<?=filemtime($styleRealPath)?>">
+<script src="<?=$scriptSrc?>"></script>
+
+<div class="widget-wrapper" id="<?=$wrapperId?>">
+    <div class="appointment-button-wrapper loading" id="<?=$widgetBtnWrapId?>">
+        <button id="<?=$widgetBtnId?>"></button>
+        <div class="appointment-loader">
+            <?for ($i = 1; $i <= 5; $i++ ):?>
+                <div class="wBall" id="wBall_<?=$i?>"><div class="wInnerBall"></div></div>
+            <?endfor;?>
+        </div>
+    </div>
+
+    <form id="<?=$formId?>" class="appointment-form">
+        <?foreach($blocksInfo as $key => $text):?>
+            <div class="selection-block <?=($key !== $clinicsKey ? 'hidden' : '')?>" id="<?=$key?>_block">
+                <p class="selection-item-selected" id="<?=$key?>_selected"><?=$text?></p>
+                <ul class="appointment-form_head_list selection-item-list" id="<?=$key?>_list"></ul>
+                <input type="hidden" name="<?=$key?>" id="<?=$key?>_value">
+            </div>
+        <?endforeach;?>
+
+        <label class="appointment-form_input-wrapper">
+            <input type="text" class="appointment-form_input" placeholder="Имя *" id="<?=$nameInputId?>" maxlength="30">
+        </label>
+
+        <label class="appointment-form_input-wrapper">
+            <input type="text" class="appointment-form_input" placeholder="Отчество *" id="<?=$middleNameInputId?>" maxlength="30">
+        </label>
+
+        <label class="appointment-form_input-wrapper">
+            <input type="text" class="appointment-form_input" placeholder="Фамилия *" id="<?=$surnameInputId?>" maxlength="30">
+        </label>
+
+        <label class="appointment-form_input-wrapper">
+            <input type="tel" class="appointment-form_input" placeholder="Телефон *" id="<?=$phoneInputId?>" autocomplete="new-password" aria-autocomplete="list">
+        </label>
+
+        <label class="appointment-form_input-wrapper">
+            <textarea class="appointment-form_textarea" placeholder="Комментарий" id="<?=$commentInputId?>" maxlength="300"></textarea>
+        </label>
+
+        <p id="<?=$messageNodeId?>"></p>
+
+        <div class="appointment-form_submit-wrapper">
+            <button type="submit" id="<?=$submitBtnId?>" class="appointment-form_button">Записаться на приём</button>
+        </div>
+
+        <div id="<?=$appResultBlockId?>"><p></p></div>
+    </form>
+</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', ()=>{
+            window.appointmentWidget.init({
+                "ajaxPath": '<?=$ajaxPath?>',
+                "widgetBtnWrapId": '<?=$widgetBtnWrapId?>',
+                "wrapperId": "<?=$wrapperId?>",
+                "formId": '<?=$formId?>',
+                "widgetBtnId": '<?=$widgetBtnId?>',
+                "messageNodeId": '<?=$messageNodeId?>',
+                "submitBtnId": '<?=$submitBtnId?>',
+                "appResultBlockId": '<?=$appResultBlockId?>',
+                "dataKeys": {
+                    "clinicsKey": '<?=$clinicsKey?>',
+                    "specialtiesKey": '<?=$specialtiesKey?>',
+                    "employeesKey": '<?=$employeesKey?>',
+                    "scheduleKey": '<?=$scheduleKey?>',
+                },
+                "selectionNodes": {
+                    ['<?=$clinicsKey?>']: {
+                        "blockId": "<?=$clinicsKey?>_block",
+                        "listId": "<?=$clinicsKey?>_list",
+                        "selectedId": "<?=$clinicsKey?>_selected",
+                        "inputId": "<?=$clinicsKey?>_value",
+                        "isRequired": true
+                    },
+                    ['<?=$specialtiesKey?>']: {
+                        "blockId": "<?=$specialtiesKey?>_block",
+                        "listId": "<?=$specialtiesKey?>_list",
+                        "selectedId": "<?=$specialtiesKey?>_selected",
+                        "inputId": "<?=$specialtiesKey?>_value",
+                        "isRequired": true
+                    },
+                    ['<?=$employeesKey?>']: {
+                        "blockId": "<?=$employeesKey?>_block",
+                        "listId": "<?=$employeesKey?>_list",
+                        "selectedId": "<?=$employeesKey?>_selected",
+                        "inputId": "<?=$employeesKey?>_value",
+                        "isRequired": true
+                    },
+                    ['<?=$scheduleKey?>']: {
+                        "blockId": "<?=$scheduleKey?>_block",
+                        "listId": "<?=$scheduleKey?>_list",
+                        "selectedId": "<?=$scheduleKey?>_selected",
+                        "inputId": "<?=$scheduleKey?>_value",
+                        "isRequired": true
+                    }
+                },
+                "textNodes": {
+                    "name": {
+                        "inputId": "<?=$nameInputId?>",
+                        "isRequired": true
+                    },
+                    "surname": {
+                        "inputId": "<?=$surnameInputId?>",
+                        "isRequired": true
+                    },
+                    "middleName": {
+                        "inputId": "<?=$middleNameInputId?>",
+                        "isRequired": true
+                    },
+                    "phone": {
+                        "inputId": "<?=$phoneInputId?>",
+                        "isRequired": true
+                    },
+                    "comment": {
+                        "inputId": "<?=$commentInputId?>",
+                        "isRequired": false
+                    },
+                },
+                "defaultText": {
+                    ['<?=$clinicsKey?>']: '<?=$blocksInfo[$clinicsKey]?>',
+                    ['<?=$specialtiesKey?>']: '<?=$blocksInfo[$specialtiesKey]?>',
+                    ['<?=$employeesKey?>']: '<?=$blocksInfo[$employeesKey]?>',
+                    ['<?=$scheduleKey?>']: '<?=$blocksInfo[$scheduleKey]?>',
+                },
+                "isUpdate": false,
+            });
+        })
+    </script>
+<?php
+}
 ?>
 
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Medical appointment page</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="assets/css/style.css?<?=filemtime(realpath('./css/style.css'))?>">
-</head>
-
-<body>
-<script>
-    window.ajaxPath = '<?=$ajaxPath?>';
-</script>
-<div class="appointment-button-wrapper loading">
-    <button id="appointment-button"></button>
-    <div class="windows8">
-        <div class="wBall" id="wBall_1">
-            <div class="wInnerBall"></div>
-        </div>
-        <div class="wBall" id="wBall_2">
-            <div class="wInnerBall"></div>
-        </div>
-        <div class="wBall" id="wBall_3">
-            <div class="wInnerBall"></div>
-        </div>
-        <div class="wBall" id="wBall_4">
-            <div class="wInnerBall"></div>
-        </div>
-        <div class="wBall" id="wBall_5">
-            <div class="wInnerBall"></div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="container">
-        <div id="appointment-form" class="appointment-form mx-auto">
-            <div class="selection-block" id="appointment-form-clinic" data-step="1">
-                <p class="selection-item-selected" data-test="asd" data-mode="def">Выберите клинику *</p>
-                <ul class="appointment-form_head_list selection-item-list" id="clinic_list"></ul>
-            </div>
-
-            <div class="selection-block hidden" id="appointment-form-specialties" data-step="2">
-                <p class="selection-item-selected">Выберите специализацию *</p>
-                <ul class="appointment-form_head_list selection-item-list" id="specialties_list"></ul>
-            </div>
-
-            <div class="selection-block hidden" id="appointment-form-employees" data-step="3">
-                <p class="selection-item-selected">Выберите врача *</p>
-                <ul class="appointment-form_head_list selection-item-list" id="employees_list"></ul>
-            </div>
-
-            <div class="selection-block hidden" id="appointment-form-schedule" data-step="4">
-                <p class="selection-item-selected">Выберите время *</p>
-                <ul class="appointment-form_head_list selection-item-list" id="schedule_list"></ul>
-            </div>
-
-            <div class="appointment-form_input-wrapper">
-                <input type="text" class="appointment-form_input" placeholder="Имя *" id="name" maxlength="30" autocomplete="off">
-            </div>
-
-            <div class="appointment-form_input-wrapper">
-                <input type="text" class="appointment-form_input" placeholder="Отчество *" id="middleName" maxlength="30" autocomplete="off">
-            </div>
-
-            <div class="appointment-form_input-wrapper">
-                <input type="text" class="appointment-form_input" placeholder="Фамилия *" id="surname" maxlength="30" autocomplete="off">
-            </div>
-
-            <div class="appointment-form_input-wrapper">
-                <input type="tel" class="appointment-form_input" placeholder="Телефон *" id="phone" autocomplete="off">
-            </div>
-
-            <div class="appointment-form_input-wrapper">
-                <textarea type="text" class="appointment-form_textarea" placeholder="Комментарий" id="comment" maxlength="300"></textarea>
-            </div>
-
-            <div class="appointment-form_submit-wrapper">
-                <button type="submit" id="create_order" class="appointment-form_button">Записаться на приём</button>
-            </div>
-
-            <div class="appointment-result-wrapper">
-                <p id="appointment-result"></p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="assets/js/script.js"></script>
-</body>
-</html>

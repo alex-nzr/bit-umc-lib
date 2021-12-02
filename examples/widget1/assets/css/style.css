@@ -1,71 +1,60 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-*{
-	box-sizing: border-box;
+.widget-wrapper{
+	color: #f5f5f5;
 }
-*::-webkit-scrollbar{
+.widget-wrapper *{
+	box-sizing: border-box;
+	font-family: Roboto, sans-serif;
+}
+.widget-wrapper *::-webkit-scrollbar{
     width: 2px;
     background: transparent;
     border-radius: 10px;
 }
-*::-webkit-scrollbar-thumb{
+.widget-wrapper *::-webkit-scrollbar-thumb{
     width: 2px;
     background: #18538E;
     border-radius: 10px;
 }
-html{
-    scroll-behavior: smooth;
-}
-body{
-	overflow-x: hidden;
-	overflow-y: scroll;
-	-webkit-overflow-scrolling: touch;
-	min-height: 100vh;
-	font-family: Roboto, sans-serif;
-	font-style: normal;
-	font-size: 14px;
-	line-height: 16px;
-	background: url("../img/bg.jpeg") center center / cover no-repeat;
-	color: #f5f5f5;
-}
-ol,ul,li{
+.widget-wrapper ol,
+.widget-wrapper ul,
+.widget-wrapper li{
 	padding: 0;
 	list-style: none;
 }
-button,button:active,button:focus,
-input,input:active,input:focus,
-textarea,textarea:active,textarea:focus{
+.widget-wrapper button,
+.widget-wrapper button:active,
+.widget-wrapper button:focus,
+.widget-wrapper input,
+.widget-wrapper input:active,
+.widget-wrapper input:focus,
+.widget-wrapper textarea,
+.widget-wrapper textarea:active,
+.widget-wrapper textarea:focus{
 	border:none;
 	outline:none;
 	resize: none;
 }
-a,a:hover,a:focus{
+.widget-wrapper a,.widget-wrapper a:hover,.widget-wrapper a:focus{
 	text-decoration:none;
 	color:inherit;
 	outline:none;
 }
-h1,h2,h3,h4,h5,h6,p,label{
+.widget-wrapper h1,.widget-wrapper h2,.widget-wrapper h3,.widget-wrapper h4,
+.widget-wrapper h5,.widget-wrapper h6,.widget-wrapper p,.widget-wrapper label{
 	margin: 0;
 	padding: 0;
 }
-@media (max-width: 768px){
-	body{
-		/*min-height: 0vh;
-		height: 100%;*/
-	}
-}
-
 /*---------------------------------------------------------*/
-#appointment-form{
+.widget-wrapper #appointment-form{
 	position: fixed;
 	left: 35px;
 	bottom: 40px;
 	width: 300px;
-	/height: 605px;
 	padding: 20px 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/max-height: calc(100vh - 20px);
 	background: #025ea1;
 	overflow-y: scroll;
 	box-shadow: 0 0 5px 1px #025ea1;
@@ -75,26 +64,17 @@ h1,h2,h3,h4,h5,h6,p,label{
 	transform-origin: left bottom;
 	z-index: 1000;
 }
-#appointment-form.off{
+.widget-wrapper #appointment-form.active{
+	transform: scale3d(1,1,1);
+}
+.widget-wrapper #appointment-form.off > *:not(#appointment-result-block){
+	opacity: 0;
 	pointer-events: none;
 }
 
-#appointment-form.active{
-	transform: scale3d(1,1,1);
-}
-#appointment-form::-webkit-scrollbar{
-	width: 2px;
-	background: transparent;
-	border-radius: 10px;
-}
-#appointment-form::-webkit-scrollbar-thumb{
-	width: 2px;
-	background: #18538E;
-	border-radius: 10px;
-}
-
-.selection-block,
-.appointment-form_input-wrapper{
+.widget-wrapper .selection-block,
+.widget-wrapper .appointment-form_input-wrapper{
+	display: block;
 	position: relative;
 	width: 100%;
 	max-height: 300px;
@@ -105,19 +85,19 @@ h1,h2,h3,h4,h5,h6,p,label{
     transition: .5s;
 }
 
-.selection-block.error,
-.appointment-form_input-wrapper.error{
-	box-shadow: inset 0 0 0px 2px red;
+.widget-wrapper .selection-block.error,
+.widget-wrapper .appointment-form_input-wrapper.error{
+	box-shadow: inset 0 0 0 2px red;
 }
 
-.selection-block.hidden{
+.widget-wrapper .selection-block.hidden{
 	max-height: 0;
 	margin-bottom: 0;
 	transform-origin: center top;
 	transform: scaleY(0);
 }
 
-.selection-item-selected{
+.widget-wrapper .selection-item-selected{
 	position: relative;
 	width: 100%;
 	height: 36px;
@@ -130,10 +110,10 @@ h1,h2,h3,h4,h5,h6,p,label{
     transition: .3s;
     border-radius: 6px;
 }
-.selection-item-selected:hover{
+.widget-wrapper .selection-item-selected:hover{
 	background-color: #254579;
 }
-.selection-item-selected:before{
+.widget-wrapper .selection-item-selected:before{
 	content:'';
 	position: absolute;
 	top: 50%;
@@ -145,21 +125,21 @@ h1,h2,h3,h4,h5,h6,p,label{
 	cursor: pointer;
 }
 
-.selection-item-list{
+.widget-wrapper .selection-item-list{
 	margin: 0;
 	padding: 0;
-	max-height: 0px;
+	max-height: 0;
 	border-radius: 0 0 6px 6px;
 	overflow: hidden;
 	transition: .5s;
 }
-.selection-item-list.active{
+.widget-wrapper .selection-item-list.active{
 	max-height: 150px;
 	overflow-y: scroll;
 }
 
-.selection-item-list li,
-.appointment-form_input{
+.widget-wrapper .selection-item-list li,
+.widget-wrapper .appointment-form_input{
 	width: 100%;
 	height: 36px;
 	display: flex;
@@ -175,22 +155,22 @@ h1,h2,h3,h4,h5,h6,p,label{
 	user-select: none;
 }
 
-.selection-item-list li:hover {
+.widget-wrapper .selection-item-list li:hover {
     background-color: #254579;
     color: white;
 }
-.selection-item-list li span{
+.widget-wrapper .selection-item-list li span{
 	font-weight: 600;
 }
-.appointment-form_input{
+.widget-wrapper .appointment-form_input{
 	cursor: auto;
 }
-.appointment-form_input::placeholder,
-.appointment-form_textarea::placeholder{
+.widget-wrapper .appointment-form_input::placeholder,
+.widget-wrapper .appointment-form_textarea::placeholder{
 	color: #f5f5f5;
 }
 
-.appointment-form_textarea{
+.widget-wrapper .appointment-form_textarea{
 	width: 100%;
 	height: 100px;
 	padding: 5px 15px;
@@ -202,16 +182,13 @@ h1,h2,h3,h4,h5,h6,p,label{
 	cursor: pointer;
 }
 
-.appointment-form_submit-wrapper{
-	max-height: 0;
-	overflow: hidden;
-	transition: .3s;
-}
-.appointment-form_submit-wrapper.active{
-	max-height: 40px;
+.widget-wrapper #appointment-form-message{
+	margin-bottom: 15px;
+	color: orangered;
+	text-align: center;
 }
 
-.appointment-form_button{
+.widget-wrapper .appointment-form_button{
 	position: relative;
 	display: flex;
 	justify-content: center;
@@ -228,14 +205,14 @@ h1,h2,h3,h4,h5,h6,p,label{
 	border-radius: 6px;
 	transition: .3s;
 	user-select: none;
-	pointer-events: none;
+	cursor: pointer;
 }
-.appointment-form_button:hover{
+.widget-wrapper .appointment-form_button:hover{
 	background: #3eddff;
 	color: #f5f5f5;
 }
 
-.appointment-form_button:before{
+.widget-wrapper .appointment-form_button:before{
 	content:'';
 	width: 20px;
 	height: 20px;
@@ -250,15 +227,11 @@ h1,h2,h3,h4,h5,h6,p,label{
 	opacity: 0;
 }
 
-.appointment-form_submit-wrapper.active .appointment-form_button{
-	pointer-events: auto;
-}
-
-.appointment-form_submit-wrapper.active .appointment-form_button.loading{
+.widget-wrapper .appointment-form_submit-wrapper.active .appointment-form_button.loading{
 	pointer-events: none;
 	color:transparent;
 }
-.appointment-form_submit-wrapper.active .appointment-form_button.loading:before{
+.widget-wrapper .appointment-form_submit-wrapper.active .appointment-form_button.loading:before{
 	opacity: 1;
 }
 
@@ -271,7 +244,7 @@ h1,h2,h3,h4,h5,h6,p,label{
 	}
 }
 
-.appointment-result-wrapper{
+.widget-wrapper #appointment-result-block{
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -286,24 +259,24 @@ h1,h2,h3,h4,h5,h6,p,label{
 	opacity: 0;
 	transition: .3s;
 }
-.appointment-result-wrapper.active{
+.widget-wrapper #appointment-result-block.active{
 	pointer-events: auto;
 	opacity: 1;
 }
-#appointment-result{
+.widget-wrapper #appointment-result-block p{
 	width: 100%;
 	position: relative;
 	text-align: center;
 	color:#fff;
 }
-#appointment-result.error{
+.widget-wrapper #appointment-result-block p.error{
 	font-size: 17px;
 	line-height: 1.3;
 }
-#appointment-result.success{
+.widget-wrapper #appointment-result-block p.success{
 	font-size: 20px;
 }
-#appointment-result.success:before{
+.widget-wrapper #appointment-result-block p.success:before{
 	content:'';
 	width: 50px;
 	height: 50px;
@@ -316,23 +289,27 @@ h1,h2,h3,h4,h5,h6,p,label{
 	background: url("../img/success.svg") center center/contain no-repeat;
 	pointer-events: none;
 }
+.widget-wrapper #appointment-result-block p a{
+	color: lightblue;
+	border-bottom: 1px solid lightblue;
+}
 
 /*********************************************************************************/
 
-.appointment-button-wrapper .windows8 {
+.widget-wrapper .appointment-button-wrapper .appointment-loader {
 	display: none;
 }
 
-.appointment-button-wrapper.loading .windows8{
+.widget-wrapper .appointment-button-wrapper.loading .appointment-loader{
 	display: block;
 }
 
-.appointment-button-wrapper.loading button {
+.widget-wrapper .appointment-button-wrapper.loading button {
 	pointer-events: none;
 	opacity: 0;
 }
 
-#appointment-button{
+.widget-wrapper #appointment-button{
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -349,7 +326,7 @@ h1,h2,h3,h4,h5,h6,p,label{
 	cursor: pointer;
 	transition: all .2s, color 0s;
 }
-#appointment-button:before{
+.widget-wrapper #appointment-button:before{
 	content:'';
 	position: absolute;
 	top: 0;
@@ -363,7 +340,7 @@ h1,h2,h3,h4,h5,h6,p,label{
 	cursor: pointer;
 	transition: .2s;
 }
-#appointment-button:after{
+.widget-wrapper #appointment-button:after{
 	content:'';
 	position: absolute;
 	top: 0;
@@ -376,7 +353,7 @@ h1,h2,h3,h4,h5,h6,p,label{
 	cursor: pointer;
 	transition: .2s;
 }
-#appointment-button.active{
+.widget-wrapper #appointment-button.active{
 	background: url("../img/cancel.svg") center center/contain no-repeat;
 	box-shadow: 0 0 5px 1px #18538E;
 	padding: 0;
@@ -384,22 +361,23 @@ h1,h2,h3,h4,h5,h6,p,label{
 	border-radius: 50%;
 	font-size: 0;
 }
-#appointment-button.active:before,
-#appointment-button.active:after{
+.widget-wrapper #appointment-button.active:before,
+.widget-wrapper #appointment-button.active:after{
 	animation: none;
 	opacity: 0;
 }
 
-#appointment-button.success{
+.widget-wrapper #appointment-button.success{
 	background: url("../img/success.svg") center center/contain no-repeat #025ea1;
 	box-shadow: none;
 	padding: 0;
 	color: transparent;
 	border-radius: 50%;
 	font-size: 0;
+	pointer-events: none;
 }
-#appointment-button.success:before,
-#appointment-button.success:after{
+.widget-wrapper #appointment-button.success:before,
+.widget-wrapper #appointment-button.success:after{
 	animation: none;
 	opacity: 0 !important;
 }
@@ -413,15 +391,9 @@ h1,h2,h3,h4,h5,h6,p,label{
 		opacity: 0;
 	}
 }
-@media (max-width: 768px){
-	#appointment-form{
-		/height: calc(80vh - 60px);
-		/max-height: calc(80vh - 60px);
-	}
-}
 
 /*-------------------------------------------------*/
-.windows8 {
+.widget-wrapper .appointment-loader {
 	position: fixed;
 	left: 20px;
 	bottom: 20px;
@@ -430,7 +402,7 @@ h1,h2,h3,h4,h5,h6,p,label{
 	margin:auto;
 }
 
-.windows8 .wBall {
+.widget-wrapper .appointment-loader .wBall {
 	position: absolute;
 	width: 47px;
 	height: 47px;
@@ -439,37 +411,35 @@ h1,h2,h3,h4,h5,h6,p,label{
 	animation: orbit 3.9325s infinite;
 }
 
-.windows8 .wBall .wInnerBall{
+.widget-wrapper .appointment-loader .wBall .wInnerBall{
 	position: absolute;
 	width: 6px;
 	height: 6px;
 	background: rgb(2,95,161);
-	left:0px;
-	top:0px;
+	left:0;
+	top:0;
 	border-radius: 6px;
 }
 
-.windows8 #wBall_1 {
+.widget-wrapper .appointment-loader #wBall_1 {
 	animation-delay: 0.856s;
 }
 
-.windows8 #wBall_2 {
+.widget-wrapper .appointment-loader #wBall_2 {
 	animation-delay: 0.173s;
 }
 
-.windows8 #wBall_3 {
+.widget-wrapper .appointment-loader #wBall_3 {
 	animation-delay: 0.3465s;
 }
 
-.windows8 #wBall_4 {
+.widget-wrapper .appointment-loader #wBall_4 {
 	animation-delay: 0.5095s;
 }
 
-.windows8 #wBall_5 {
+.widget-wrapper .appointment-loader #wBall_5 {
 	animation-delay: 0.693s;
 }
-
-
 
 @keyframes orbit {
 	0% {
@@ -522,5 +492,36 @@ h1,h2,h3,h4,h5,h6,p,label{
 	100% {
 		opacity: 0;
 		transform: rotate(900deg);
+	}
+}
+
+@media (max-width: 575px) {
+	.widget-wrapper #appointment-button {
+		left: 10px;
+		bottom: 10px;
+		width: 40px;
+		height: 40px;
+	}
+	.widget-wrapper .appointment-button-wrapper .appointment-loader{
+		left: 10px;
+		bottom: 10px;
+		width: 35px;
+		height: 35px;
+	}
+	.widget-wrapper .appointment-loader .wBall{
+		width: 35px;
+		height: 35px;
+	}
+	.widget-wrapper #appointment-form{
+		left: 0;
+		bottom: 0;
+		width: 100vw;
+		height: 100vh;
+		overflow: auto;
+		border-radius: 0;
+		transform: scale3d(1,1,1) translateX(-110%);
+	}
+	.widget-wrapper #appointment-form.active{
+		transform: scale3d(1,1,1) translateX(0);
 	}
 }
