@@ -7,14 +7,6 @@ if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php'))
 }
 else
 {
-    require_once __DIR__ . '/../../vendor/autoload.php';
-    \AlexNzr\BitUmcIntegration\Utils::print(
-            json_decode(\AlexNzr\BitUmcIntegration\RequestController::sendRequest(json_encode([
-                    //"action"=>"GetListNomenclature",
-                    //"employeeUid" => "ac30e139-3087-11dc-8594-005056c00008"
-            ])), true)
-    );
-
     $ajaxPath = substr(realpath(__DIR__.'/ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
     $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
     $ajaxPath = implode("/", $ajaxPath);
