@@ -154,7 +154,7 @@ class Utils{
      * @param int $duration
      * @return array
      */
-    public static function formatTimetable($array, int $duration): array
+    public static function formatTimetable($array, int $duration, $useDefaultInterval = false): array
     {
         if (!is_array($array) || empty($array)){
             return [];
@@ -174,26 +174,44 @@ class Utils{
                 $timestampTimeBegin = strtotime($item["ВремяНачала"]);
                 $timestampTimeEnd = strtotime($item["ВремяОкончания"]);
 
-                $timeDifference = $timestampTimeEnd - $timestampTimeBegin;
-                $appointmentsCount = round($timeDifference / $duration);
-
-                for ($i = 0; $i < $appointmentsCount; $i++)
-                {
-                    $start = $timestampTimeBegin + ($duration * $i);
-                    $end = $timestampTimeBegin + ($duration * ($i+1));
-
+                if ($useDefaultInterval){
                     $formattedArray[] = [
                         "typeOfTimeUid" => $item["ВидВремени"],
                         "date" => $item["Дата"],
-                        "timeBegin" => date("Y-m-d", $start) ."T". date("H:i:s", $start),
-                        "timeEnd" => date("Y-m-d", $end) ."T". date("H:i:s", $end),
+                        "timeBegin" => date("Y-m-d", $timestampTimeBegin) ."T". date("H:i:s", $timestampTimeBegin),
+                        "timeEnd" => date("Y-m-d", $timestampTimeEnd) ."T". date("H:i:s", $timestampTimeEnd),
                         "formattedDate" => date("d-m-Y", strtotime($item["Дата"])),
-                        "formattedTimeBegin" => date("H:i", $start),
-                        "formattedTimeEnd" => date("H:i", $end),
+                        "formattedTimeBegin" => date("H:i", $timestampTimeBegin),
+                        "formattedTimeEnd" => date("H:i", $timestampTimeEnd),
                     ];
+                }
+                else
+                {
+                    $timeDifference = $timestampTimeEnd - $timestampTimeBegin;
+                    $appointmentsCount = round($timeDifference / $duration);
+
+                    for ($i = 0; $i < $appointmentsCount; $i++)
+                    {
+                        $start = $timestampTimeBegin + ($duration * $i);
+                        $end = $timestampTimeBegin + ($duration * ($i+1));
+
+                        $formattedArray[] = [
+                            "typeOfTimeUid" => $item["ВидВремени"],
+                            "date" => $item["Дата"],
+                            "timeBegin" => date("Y-m-d", $start) ."T". date("H:i:s", $start),
+                            "timeEnd" => date("Y-m-d", $end) ."T". date("H:i:s", $end),
+                            "formattedDate" => date("d-m-Y", strtotime($item["Дата"])),
+                            "formattedTimeBegin" => date("H:i", $start),
+                            "formattedTimeEnd" => date("H:i", $end),
+                        ];
+                    }
                 }
             }
             return $formattedArray;
+        }
+        else
+        {
+            return [];
         }
     }
 }

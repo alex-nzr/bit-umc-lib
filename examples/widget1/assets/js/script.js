@@ -2,6 +2,7 @@
 
 window.appointmentWidget = {
 	init: async function(params){
+		this.useServices = (params.useServices === "Y");
 		this.isUpdate = params.isUpdate;
 		this.ajaxUrl = params.ajaxPath;
 		this.requestParams = {
@@ -14,12 +15,14 @@ window.appointmentWidget = {
 		this.dataKeys = {
 			clinicsKey: params.dataKeys.clinicsKey,
 			specialtiesKey: params.dataKeys.specialtiesKey,
+			servicesKey: params.dataKeys.servicesKey,
 			employeesKey: params.dataKeys.employeesKey,
 			scheduleKey: params.dataKeys.scheduleKey,
 		};
 		this.data = {
 			clinics: [],
 			employees: {},
+			services: {},
 			schedule: []
 		}
 		this.eventHandlersAdded = {}
@@ -31,6 +34,12 @@ window.appointmentWidget = {
 			},
 			[this.dataKeys.specialtiesKey]: {
 				specialty: false,
+				specialtyUid: false,
+			},
+			[this.dataKeys.servicesKey]: {
+				serviceUid: false,
+				serviceName: false,
+				serviceDuration: false,
 			},
 			[this.dataKeys.employeesKey]: {
 				refUid: false,
@@ -138,16 +147,41 @@ window.appointmentWidget = {
 			}else{
 				if (clinics.length > 0){
 					this.data.clinics = clinics;
-					const scheduleResponse = await this.getSchedule();
-					const schedule = await scheduleResponse.json();
 
-					if (schedule.error){
-						this.errorMessage(schedule.error);
+					if (this.useServices){
+						const nomenclatureResponse = await this.getListNomenclature();
+						const nomenclature = await nomenclatureResponse.json();
+
+						if (nomenclature.error){
+							this.errorMessage(nomenclature.error);
+						}else{
+							if (Object.keys(nomenclature).length > 0){
+								this.data.services = nomenclature;
+							}
+						}
+					}
+
+					const employeesResponse = await this.getListEmployees();
+					const employees = await employeesResponse.json();
+
+					if (employees.error){
+						this.errorMessage(employees.error);
 					}else{
-						if (schedule.hasOwnProperty("employees") && schedule.hasOwnProperty("schedule")){
-							this.data.employees = schedule.employees;
-							this.data.schedule = schedule.schedule;
-							loaded = true;
+						if (Object.keys(employees).length > 0){
+							this.data.employees = employees;
+							const scheduleResponse = await this.getSchedule();
+							const schedule = await scheduleResponse.json();
+
+							if (schedule.error){
+								this.errorMessage(schedule.error);
+							}else{
+								if (schedule.hasOwnProperty("schedule")){
+									this.data.schedule = schedule.schedule;
+									loaded = true;
+								}
+							}
+						}else{
+							this.errorMessage("Employees not found")
 						}
 					}
 				}else{
@@ -169,6 +203,34 @@ window.appointmentWidget = {
 				return response;
 			}else{
 				this.errorMessage(`Get clinics error. Status code ${response.status}`);
+			}
+		} catch(e) {
+			this.errorMessage(e);
+		}
+	},
+
+	getListEmployees: async function(){
+		try {
+			this.requestParams.body = JSON.stringify({action: 'GetListEmployees'});
+			const response = await fetch(this.ajaxUrl, this.requestParams);
+			if (response.ok) {
+				return response;
+			}else{
+				this.errorMessage(`Get employees error. Status code ${response.status}`);
+			}
+		} catch(e) {
+			this.errorMessage(e);
+		}
+	},
+
+	getListNomenclature: async function(){
+		try {
+			this.requestParams.body = JSON.stringify({action: 'GetListNomenclature'});
+			const response = await fetch(this.ajaxUrl, this.requestParams);
+			if (response.ok) {
+				return response;
+			}else{
+				this.errorMessage(`Get nomenclature error. Status code ${response.status}`);
 			}
 		} catch(e) {
 			this.errorMessage(e);
@@ -256,13 +318,50 @@ window.appointmentWidget = {
 			{
 				for (let uid in this.data.employees)
 				{
-					const li = document.createElement('li');
-					if (this.data.employees.hasOwnProperty(uid)){
-						li.textContent = this.data.employees[uid].specialty;
-						specialtiesList.append(li);
+					if (this.filledInputs[this.dataKeys.clinicsKey].clinicUid === this.data.employees[uid].clinicUid)
+					{
+						const li = document.createElement('li');
+						if (this.data.employees.hasOwnProperty(uid)){
+							li.textContent = this.data.employees[uid].specialty;
+							li.dataset.uid = this.data.employees[uid].specialtyUid;
+							specialtiesList.append(li);
+						}
 					}
 				}
 				this.addListActions(this.dataKeys.specialtiesKey);
+			}
+		}
+		else
+		{
+			this.errorMessage("specialties block not found")
+		}
+	},
+
+	renderServicesList: function(){
+		if (this.selectionNodes.hasOwnProperty(this.dataKeys.servicesKey))
+		{
+			const servicesList = this.selectionNodes[this.dataKeys.servicesKey].listNode;
+			servicesList.innerHTML = '';
+			this.eventHandlersAdded[this.dataKeys.servicesKey] = false;
+			if(Object.keys(this.data.services).length > 0)
+			{
+				for (let uid in this.data.services)
+				{
+					if (this.filledInputs[this.dataKeys.specialtiesKey].specialtyUid === this.data.services[uid].specialtyUid)
+					{
+						const li = document.createElement('li');
+						if (this.data.services.hasOwnProperty(uid)){
+							li.innerHTML = `<p>
+												${this.data.services[uid].name}<br>
+												<b>${this.data.services[uid]['price']}</b>₽
+											</p>`;
+							li.dataset.uid = uid;
+							li.dataset.duration = this.data.services[uid].duration;
+							servicesList.append(li);
+						}
+					}
+				}
+				this.addListActions(this.dataKeys.servicesKey);
 			}
 		}
 		else
@@ -284,10 +383,19 @@ window.appointmentWidget = {
 					{
 						if (this.filledInputs[this.dataKeys.specialtiesKey].specialty === this.data.employees[uid].specialty)
 						{
+							if (this.useServices)
+							{
+								const selectedServiceUid = this.filledInputs[this.dataKeys.servicesKey].serviceUid;
+								if (!this.data.employees[uid].services.hasOwnProperty(selectedServiceUid)){
+									continue;
+								}
+							}
 							const li = document.createElement('li');
 							li.dataset.uid = uid;
 							li.dataset.specialty = this.data.employees[uid].specialty;
-							li.textContent = this.data.employees[uid].name;
+							li.textContent = `${this.data.employees[uid].surname} 
+												${this.data.employees[uid].name} 
+												${this.data.employees[uid].middleName}`;
 							empList.append(li);
 						}
 					}
@@ -310,26 +418,46 @@ window.appointmentWidget = {
 					&& employeeSchedule.refUid === this.filledInputs[this.dataKeys.employeesKey].refUid
 				)
 				{
-					if (employeeSchedule.timetable?.free?.length)
+					const serviceDuration = Number(this.filledInputs[this.dataKeys.servicesKey].serviceDuration);
+					const renderCustomIntervals = this.useServices && (serviceDuration > 0);
+					const timeKey = renderCustomIntervals ? "freeNotFormatted" : "free";
+
+					if (employeeSchedule['timetable'][timeKey].length)
 					{
-						employeeSchedule.timetable.free.forEach((day) => {
+						let intervals = employeeSchedule['timetable'][timeKey];
+
+						if (renderCustomIntervals)
+						{
+							const customIntervals = this.getIntervalsForServiceDuration(intervals, serviceDuration*1000);
+
+							if (customIntervals.length === 0)
+							{
+								const span = document.createElement('span');
+								span.classList.add("empty-selection-message");
+								span.textContent = `К сожалению, запись на данную услугу к выбранному специалисту невозможна на ближайшее время`;
+								scheduleList.append(span);
+								return;
+							}
+							else
+							{
+								intervals = customIntervals;
+							}
+						}
+
+						intervals.forEach((day) => {
 							const li = document.createElement('li');
 							const span = document.createElement('span');
-
 							li.dataset.date = day.date;
-
 							li.dataset.start = day.timeBegin;
 							li.dataset.end = day.timeEnd;
-							li.textContent = `${day.formattedDate} `;
-							span.textContent = `${day.formattedTimeBegin}-${day.formattedTimeEnd}`;
+							li.textContent = `${day['formattedDate']} `;
+							span.textContent = `${day['formattedTimeBegin']}-${day['formattedTimeEnd']}`;
 							li.append(span);
 							scheduleList.append(li);
 						});
 					}else{
 						const span = document.createElement('span');
-						span.style.display = 'block';
-						span.style.fontSize = '11px';
-						span.style.padding = '0 15px';
+						span.classList.add("empty-selection-message");
 						span.textContent = `К сожалению, у данного специалиста нет записи в выбранном филиале на ближайшее время`;
 						scheduleList.append(span);
 					}
@@ -341,6 +469,49 @@ window.appointmentWidget = {
 		{
 			this.errorMessage("Schedule is empty");
 		}
+	},
+
+	getIntervalsForServiceDuration: function(intervals, serviceDurationMs) {
+		const newIntervals = [];
+		intervals.length && intervals.forEach((day) => {
+			const timestampTimeBegin = Number(new Date(day.timeBegin));
+			const timestampTimeEnd = Number(new Date(day.timeEnd));
+			const timeDifference = timestampTimeEnd - timestampTimeBegin;
+			const appointmentsCount = Math.floor(timeDifference / serviceDurationMs);
+			if (appointmentsCount > 0)
+			{
+				//with time step = 15 minutes
+				let start = new Date(timestampTimeBegin);
+				let end = new Date(timestampTimeBegin + serviceDurationMs);
+				while(end.getTime() <= timestampTimeEnd){
+					newIntervals.push({
+						"date": 				day.date,
+						"timeBegin": 			this.convertDateToISO(start),
+						"timeEnd": 				this.convertDateToISO(end),
+						"formattedDate": 		this.convertDateToDisplay(start, false),
+						"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
+						"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
+					});
+					start.setMinutes(start.getMinutes() + 15);
+					end.setMinutes(end.getMinutes() + 15);
+				}
+				//without time steps
+				/*for (let i = 0; i < appointmentsCount; i++)
+				{
+					let start = new Date(timestampTimeBegin + (serviceDurationMs * i));
+					let end = new Date(timestampTimeBegin + (serviceDurationMs * (i+1)));
+					newIntervals.push({
+						"date": 				day.date,
+						"timeBegin": 			this.convertDateToISO(start),
+						"timeEnd": 				this.convertDateToISO(end),
+						"formattedDate": 		this.convertDateToDisplay(start, false),
+						"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
+						"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
+					});
+				}*/
+			}
+		});
+		return newIntervals;
 	},
 
 	addListActions: function(dataKey) {
@@ -399,6 +570,13 @@ window.appointmentWidget = {
 				break;
 			case this.dataKeys.specialtiesKey:
 				this.filledInputs[dataKey].specialty = target.textContent;
+				this.filledInputs[dataKey].specialtyUid = target.dataset.uid;
+				this.useServices ? this.renderServicesList() : this.renderEmployeesList();
+				break;
+			case this.dataKeys.servicesKey:
+				this.filledInputs[dataKey].serviceName = target.textContent;
+				this.filledInputs[dataKey].serviceUid = target.dataset.uid;
+				this.filledInputs[dataKey].serviceDuration = target.dataset.duration;
 				this.renderEmployeesList();
 				break;
 			case this.dataKeys.employeesKey:
@@ -502,7 +680,12 @@ window.appointmentWidget = {
 	activateBlocks: function(){
 		let current = false;
 		let next = false;
-		for (const nodesKey in this.selectionNodes) {
+		for (const nodesKey in this.selectionNodes)
+		{
+			if (!this.useServices && nodesKey === this.dataKeys.servicesKey){
+				continue;
+			}
+
 			if (this.selectionNodes.hasOwnProperty(nodesKey))
 			{
 				const block = this.selectionNodes[nodesKey].blockNode;
@@ -588,6 +771,61 @@ window.appointmentWidget = {
 			newValue += value[valueIndex++];
 		}
 		input.value = newValue;
+	},
+
+	convertDateToISO: function (timestamp) {
+		const date = new Date(timestamp);
+
+		let day = date.getDate();
+		if (Number(day)<10) {
+			day = `0${day}`;
+		}
+
+		let month = date.getMonth()+1;
+		if (Number(month)<10) {
+			month = `0${month}`;
+		}
+
+		let hours = date.getHours();
+		if (Number(hours)<10) {
+			hours = `0${hours}`;
+		}
+
+		let minutes = date.getMinutes();
+		if (Number(minutes)<10) {
+			minutes = `0${minutes}`;
+		}
+
+		return `${date.getFullYear()}-${month}-${day}T${hours}:${minutes}:00`;
+	},
+
+	convertDateToDisplay: function (timestamp, onlyTime = false) {
+		const date = new Date(timestamp);
+
+		let day = date.getDate();
+		if (Number(day)<10) {
+			day = `0${day}`;
+		}
+
+		let month = date.getMonth()+1;
+		if (Number(month)<10) {
+			month = `0${month}`;
+		}
+
+		let hours = date.getHours();
+		if (Number(hours)<10) {
+			hours = `0${hours}`;
+		}
+
+		let minutes = date.getMinutes();
+		if (Number(minutes)<10) {
+			minutes = `0${minutes}`;
+		}
+
+		if (onlyTime){
+			return `${hours}:${minutes}`;
+		}
+		return `${day}-${month}-${date.getFullYear()}`;
 	},
 
 	phoneIsValid: function(phoneInput){

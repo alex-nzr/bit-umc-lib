@@ -109,43 +109,31 @@ class RequestService{
     }
 
     /** get list of employees in json
+     * @param $params
      * @return string
      */
-    public static function getListEmployees(): string
+    public static function getListEmployees($params): string
     {
-        $data = json_decode(self::post("GetListEmployees"), true);
-        $employees = $data["Сотрудники"]["Сотрудник"];
-        if (!empty($employees) && empty($data["error"]))
+        $data = json_decode(self::post("GetListEmployees", $params), true);
+        $employees = $data["employees"];
+        if (empty($data["error"]) && is_array($employees))
         {
-            if (is_array($employees)){
-                if (Utils::is_assoc($employees))
-                {
-                    $employees = array($employees);
-                }
-                $newData = [];
-                foreach ($employees as $key => $employee)
-                {
-                    if (isset($employee["Организация"])){
-                        $newData[$key]["clinicUid"] = $employee["Организация"];
-                    }
-                    if (isset($employee["Специализация"])){
-                        $newData[$key]["specialty"] = $employee["Специализация"];
-                    }
-                    if (isset($employee["Фамилия"])){
-                        $newData[$key]["surname"] = $employee["Фамилия"];
-                    }
-                    if (isset($employee["Имя"])){
-                        $newData[$key]["name"] = $employee["Имя"];
-                    }
-                    if (isset($employee["Отчество"])){
-                        $newData[$key]["middleName"] = $employee["Отчество"];
-                    }
-                    if (isset($employee["UID"])){
-                        $newData[$key]["uid"] = $employee["UID"];
-                    }
-                }
-                $data = $newData;
-            }
+            $data = $employees;
+        }
+        return json_encode($data);
+    }
+
+    /** get list of nomenclature in json
+     * @param $params
+     * @return string
+     */
+    public static function getListNomenclature($params): string
+    {
+        $data = json_decode(self::post("GetListNomenclature", $params), true);
+        $nomenclature = $data["nomenclature"];
+        if (empty($nomenclature["error"]) && is_array($nomenclature))
+        {
+            $data = $nomenclature;
         }
         return json_encode($data);
     }
@@ -167,21 +155,16 @@ class RequestService{
                     $schedule = array($schedule);
                 }
 
-                $employees = [];
                 $formattedSchedule = [];
-
                 foreach ($schedule as $key => $item)
                 {
                     if (isset($item["СотрудникID"])){
                         $formattedSchedule[$key]["refUid"] = $item["СотрудникID"];
-                        $employees[$item["СотрудникID"]] = [];
                     }
                     if (isset($item["Специализация"])){
-                        $employees[$item["СотрудникID"]]["specialty"] = $item["Специализация"];
                         $formattedSchedule[$key]["specialty"] = $item["Специализация"];
                     }
                     if (isset($item["СотрудникФИО"])){
-                        $employees[$item["СотрудникID"]]["name"] = $item["СотрудникФИО"];
                         $formattedSchedule[$key]["name"] = $item["СотрудникФИО"];
                     }
                     if (isset($item["Клиника"])){
@@ -208,10 +191,10 @@ class RequestService{
                     }
 
                     $formattedSchedule[$key]["timetable"]["free"] = Utils::formatTimetable($freeTime, $duration);
-                    $formattedSchedule[$key]["timetable"]["busy"] = Utils::formatTimetable($busyTime, $duration);
+                    $formattedSchedule[$key]["timetable"]["busy"] = Utils::formatTimetable($busyTime, 0, true);
+                    $formattedSchedule[$key]["timetable"]["freeNotFormatted"] = Utils::formatTimetable($freeTime, 0, true);
                 }
                 $data = [
-                    "employees" => $employees,
                     "schedule" => $formattedSchedule,
                 ];
             }
