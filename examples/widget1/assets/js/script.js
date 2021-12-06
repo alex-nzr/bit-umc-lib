@@ -350,10 +350,11 @@ window.appointmentWidget = {
 					if (this.filledInputs[this.dataKeys.specialtiesKey].specialtyUid === this.data.services[uid].specialtyUid)
 					{
 						const li = document.createElement('li');
+						const price = Number((this.data.services[uid]['price']).replace(/\s+/g, ''));
 						if (this.data.services.hasOwnProperty(uid)){
 							li.innerHTML = `<p>
 												${this.data.services[uid].name}<br>
-												<b>${this.data.services[uid]['price']}</b>₽
+												${price>0 ? "<b>"+price+"</b>₽" : ""}
 											</p>`;
 							li.dataset.uid = uid;
 							li.dataset.duration = this.data.services[uid].duration;
