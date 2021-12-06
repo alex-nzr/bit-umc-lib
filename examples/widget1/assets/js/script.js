@@ -400,6 +400,12 @@ window.appointmentWidget = {
 						}
 					}
 				}
+				if (empList.children.length === 0){
+					const span = document.createElement('span');
+					span.classList.add("empty-selection-message");
+					span.textContent = `К сожалению, по выбранным параметрам на ближайшее время нет свободных специалистов`;
+					empList.append(span);
+				}
 				this.addListActions(this.dataKeys.employeesKey);
 			}
 		}
