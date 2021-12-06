@@ -227,6 +227,7 @@ class RequestService{
                 $params['surname'] = Variables::UNAUTHORIZED_USER_SURNAME;
                 $params['phone'] = Variables::UNAUTHORIZED_USER_PHONE;
                 $params['clientUid'] = Variables::UNAUTHORIZED_USER_UID;
+                $params['unauthorized'] = "Y";
             }
 
             return self::post('CreateOrder', $params);
