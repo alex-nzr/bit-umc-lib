@@ -513,6 +513,12 @@ Success response data(json)
     "success" => true
 }
 ```
+Or if a waiting list was created instead of an order
+```
+{
+    "success" => true
+}
+```
 
 Error response data(json)
 ```
