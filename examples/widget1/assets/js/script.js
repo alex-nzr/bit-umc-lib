@@ -554,7 +554,7 @@ window.appointmentWidget = {
 		for (let item of items) {
 			item.addEventListener('click', (e)=>{
 				this.selectionNodes[dataKey].listNode.classList.toggle('active');
-				this.selectionNodes[dataKey].selectedNode.textContent = e.currentTarget.textContent;
+				this.selectionNodes[dataKey].selectedNode.innerHTML = `<span>${e.currentTarget.textContent}</span>`;
 				this.changeStep(dataKey, e.currentTarget);
 				this.activateBlocks();
 			})

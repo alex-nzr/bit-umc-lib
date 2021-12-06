@@ -109,7 +109,7 @@ body{
 	display: flex;
 	justify-content: flex-start;
 	align-items: center;
-	padding: 0 15px;
+	padding: 0 25px 0 15px;
 	color: #FFF;
     font-size: 12px;
     transition: .3s;
@@ -129,7 +129,11 @@ body{
 	background: url(../img/dropdown.svg) center center/contain no-repeat;
 	cursor: pointer;
 }
-
+.widget-wrapper .selection-item-selected span{
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
 .widget-wrapper .selection-item-list{
 	margin: 0;
 	padding: 0;
