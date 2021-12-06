@@ -465,12 +465,16 @@ Request data(json)
 
 If this param `clientUid` is empty and `action=CreateOrder`, 1c will create new client in DB.
 
-If param `action` = `CreateOrderUnauthorized`, it will fill param `clientUid` from `src/Variables.php` - `UNAUTHORIZED_USER_UID`.  
+If param `action` = `CreateOrderUnauthorized`, there are two possible ways depending on 1C settings in the integration form.
+
+1. It will fill param `clientUid` from `src/Variables.php` - `UNAUTHORIZED_USER_UID`.  
 If constant `UNAUTHORIZED_USER_UID` is empty or not valid, it will create new user from other params:
 `UNAUTHORIZED_USER_NAME
 UNAUTHORIZED_USER_MIDDLE_NAME
 UNAUTHORIZED_USER_SURNAME
 UNAUTHORIZED_USER_PHONE`
+   
+2. Not an order will be created, but an entry in the waiting list, which the clinic administrator will process according to the accepted regulations.
 
 If param `orderUid` not empty, 1c will update already existing order.
 
