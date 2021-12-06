@@ -45,7 +45,7 @@ class RequestController{
                 $response = RequestService::getListClinics();
                 break;
             case 'GetListEmployees':
-                $response = RequestService::getListEmployees($data);Utils::printLog($response);
+                $response = RequestService::getListEmployees($data);
                 break;
             case 'GetListNomenclature':
                 $response = RequestService::getListNomenclature($data);
@@ -87,6 +87,9 @@ class RequestController{
                 break;
             case 'GetListClinics':
                 $response = RequestServiceDemo::getListClinics();
+                break;
+            case 'GetListNomenclature':
+                $response = RequestServiceDemo::getListNomenclature();
                 break;
             case 'GetListEmployees':
                 $response = RequestServiceDemo::getListEmployees();

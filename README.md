@@ -157,24 +157,76 @@ $clinics = RequestController::sendRequest(json_encode(["action" => "GetListClini
 
 ### Get all employees
 Request data(json)
+
+`employeeUid` is optionally param to get only one employee
 ```
 {
-    "action": "GetListEmployees"
+    "action": "GetListEmployees",
+    "employeeUid" => "ac30e139-3087-11dc-8594-005056c00008",
 }
 ```
 
 Success response data(json)
 ```
-[
-    {
-        "name": "Иванов",
-        "surname": "Иван",
-        "middlename": "Иванович",
-        "uid": "ac30e13a-3087-11dc-8594-005056c00008",
-        "specialty": "Офтальмология",
-        "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c"
+{
+    "2eb1f97b-6a3c-11e9-936d-1856809fe650": {
+    "name": "Юрий",
+    "surname": "Безногов",
+    "middleName": "Сергеевич",
+    "specialty": "Хирургия",
+    "clinic": "Центральная клиника",
+    "inSchedule": true,
+    "specialtyUid": "ce182405-5065-11e4-8cb1-c80aa974ec9e",
+    "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c",
+    "services": {
+      "dc58bfaf-65b4-11e9-936d-1856809fe650": {
+        "title": "Перевязка инфицированной раны малая"
+      },
+      "dc58bfa5-65b4-11e9-936d-1856809fe650": {
+        "title": "Удаление вросшего ногтя без учета анестезии"
+      },
+      "dc58bfa2-65b4-11e9-936d-1856809fe650": {
+        "title": "Удаление скальпелем ганглия"
+      },
+      "dc58bfa1-65b4-11e9-936d-1856809fe650": {
+        "title": "Повторная консультация хирурга "
+      },
+      "dc58bfa0-65b4-11e9-936d-1856809fe650": {
+        "title": "Первичная консультация хирурга "
+      },
+      "dc58bfae-65b4-11e9-936d-1856809fe650": {
+        "title": "Перевязка неинфицированной раны большая"
+      },
     }
-]
+  },
+  "e7005e6f-65c9-11e9-936d-1856809fe650": {
+    "name": "Семен",
+    "surname": "Малоухов",
+    "middleName": "Семенович",
+    "specialty": "Оториноларингология",
+    "clinic": "Центральная клиника",
+    "inSchedule": true,
+    "specialtyUid": "eebe3e98-233d-11e2-9496-1803736d59cd",
+    "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c",
+    "services": {
+      "ca04032f-9f39-11e6-8221-985fd33a0f52": {
+        "title": "Консультация врача-оториноларинголога"
+      },
+      "ca040333-9f39-11e6-8221-985fd33a0f52": {
+        "title": "Снятие тональной аудиограммы"
+      },
+      "ca040334-9f39-11e6-8221-985fd33a0f52": {
+        "title": "Аудиометрия"
+      },
+      "ca040339-9f39-11e6-8221-985fd33a0f52": {
+        "title": "Удаление серной пробки из одного уха"
+      },
+      "ca040335-9f39-11e6-8221-985fd33a0f52": {
+        "title": "Подбор слухового аппарата"
+      },
+    }
+  },
+}
 ```
 
 Error response data(json)
@@ -189,6 +241,73 @@ Php code example
 $employees = RequestController::sendRequest(json_encode(["action" => "GetListEmployees"]));
 ```
 
+
+### Get nomenclature
+Request data(json)
+
+`nomenclatureUid` is optionally param to get only one employee
+```
+{
+    "action": "GetListNomenclature",
+    "nomenclatureUid" => "ac30e139-3087-11dc-8594-005056c00008",
+}
+```
+
+Success response data(json)
+```
+{
+    "8e045f06-da18-11e1-bab2-1803736d59cd": {
+        "name": "Прогревание свечой",
+        "typeOfItem": "Услуга",
+        "duration": 1800,
+        "specialty": "Терапия",
+        "specialtyUid": "91d8a3f0-d7cf-11e1-bab2-1803736d59cd",
+        "artNumber": "NBS-17",
+        "isAnalysis": false,
+        "isMedicalCheck": false,
+        "VAT": "20%",
+        "price": "300"
+    },
+    "22d1b485-b34b-11de-8171-001583078ee5": {
+        "name": "Подбор очков сложной коррекции ",
+        "typeOfItem": "Услуга",
+        "duration": 3600,
+        "specialty": "Офтальмология",
+        "specialtyUid": "785d8a6e-5c72-11dd-8423-005056c00008",
+        "artNumber": "OFT-21",
+        "isAnalysis": false,
+        "isMedicalCheck": false,
+        "VAT": "",
+        "price": "1 000"
+    },
+    "9ab45d77-c599-11e1-818b-80c16e5c9fe3": {
+        "name": "Анализ мочи",
+        "typeOfItem": "Услуга",
+        "duration": 600,
+        "specialty": "Лабораторные исследования",
+        "specialtyUid": "e866ea50-093d-11e2-87b2-002618dcef2c",
+        "artNumber": "А1",
+        "isAnalysis": true,
+        "isMedicalCheck": false,
+        "VAT": "",
+        "price": "300"
+    },
+}
+```
+
+Error response data(json)
+```
+{
+    error: "something went wrong..."
+}
+```
+
+Php code example
+```
+$nomenclature = RequestController::sendRequest(json_encode(["action" => "GetListNomenclature"]));
+```
+
+
 ### Get schedule
 You can configure period(30 days default) and duration(1800 seconds default) in `src/Variables.php`. 
 ```
@@ -196,7 +315,10 @@ SCHEDULE_PERIOD_IN_DAYS = 30;
 DEFAULT_APPOINTMENT_DURATION = 1800;
 ```
 
-Request data(json) DEFAULT_APPOINTMENT_DURATION
+Request data(json) 
+`freeNotFormatted`  contains time intervals without formatting by the duration of reception. This is necessary when using services, for the correct calculation of intervals, based on the duration of the selected service.
+`free` contains time intervals formatted taking into account the duration of the doctor's appointment specified in 1C. If there is no information in 1C, then the value of the constant `DEFAULT_APPOINTMENT_DURATION` is used.
+
 ```
 {
     "action": "GetSchedule"
@@ -206,23 +328,13 @@ Request data(json) DEFAULT_APPOINTMENT_DURATION
 Success response data(json)
 ```
 {
-        "employees": {
-            "ac30e13a-3087-11dc-8594-005056c00008": {
-                "specialty": "Офтальмология",
-                "name": "Барбышева Евгения Петровна"
-            },
-            "2eb1f97b-6a3c-11e9-936d-1856809fe650": {
-                "specialty": "Хирургия",
-                "name": "Безногов Юрий Сергеевич"
-            }
-        },
         "schedule": [
             {
                 "specialty": "Офтальмология",
                 "name": "Барбышева Евгения Петровна",
                 "refUid": "ac30e13a-3087-11dc-8594-005056c00008",
                 "clinicUid": "4c68deb4-22c3-11df-8618-002618dcef2c",
-                "duration": "0001-01-01T00:00:00",
+                "duration": "0001-01-01T00:30:00",
                 "durationInSeconds": 1800,
                 "timetable": {
                     "free": [
@@ -252,10 +364,30 @@ Success response data(json)
                             "timeBegin": "2021-09-30T18:30:00",
                             "timeEnd": "2021-09-30T19:00:00",
                             "formattedDate": "30-09-2021",
-                            "formattedTimeBegin": "18:30",
-                            "formattedTimeEnd": "19:00",
+                            "formattedTimeBegin": "19:30",
+                            "formattedTimeEnd": "20:00",
                         }
-                    ]
+                    ],
+                    "freeNotFormatted": [
+                        {
+                            "typeOfTimeUid": "624f2a40-5aa8-4f01-83f4-0f38535364bb",
+                            "date": "2021-09-18T00:00:00",
+                            "timeBegin": "2021-09-18T18:30:00",
+                            "timeEnd": "2021-09-18T19:30:00",
+                            "formattedDate": "18-09-2021",
+                            "formattedTimeBegin": "18:30",
+                            "formattedTimeEnd": "19:30",
+                        },
+                        {
+                            "typeOfTimeUid": "624f2a40-5aa8-4f01-83f4-0f38535364bb",
+                            "date": "2021-09-19T00:00:00",
+                            "timeBegin": "2021-09-19T18:30:00",
+                            "timeEnd": "2021-09-19T19:30:00",
+                            "formattedDate": "19-09-2021",
+                            "formattedTimeBegin": "18:30",
+                            "formattedTimeEnd": "19:30",
+                        }
+                    ],
                 }
             }
         ]
@@ -344,8 +476,11 @@ If param `orderUid` not empty, 1c will update already existing order.
 
 `refUid` - doctor or cabinet uuid from schedule
 
-"email", "comment" and "address" are not required params.
-"clientUid" and "orderUid" influence  the logic of saving the document in 1C
+`serviceUid`, `email`, `comment` and `address` are not required params.
+
+`clientUid` and `orderUid` influence  the logic of saving the document in 1C.
+
+`serviceUid` will add selected service in 1C document. 
 ```
 {
     "action": "CreateOrder"/"CreateOrderUnauthorized",
@@ -362,7 +497,8 @@ If param `orderUid` not empty, 1c will update already existing order.
     "comment": "Какой-то текст комментария"
     "address": "г. Москва, ул. Пушкина 56"
     "clientUid": "84291ec6-161a-11ec-9bc2-c03eba27318f",
-    "orderUid": "01fa3622-16f1-11ec-9bc2-c03eba27318f"
+    "orderUid": "01fa3622-16f1-11ec-9bc2-c03eba27318f",
+    "serviceUid": "91d8a3f1-d7cf-11e1-bab2-1803736d59cd"
 }
 ```
 
@@ -386,18 +522,19 @@ Php code example
 ```
 $result = RequestController::sendRequest(json_encode([
     "action" => "CreateOrderUnauthorized", 
-    "clinicUid" => "f679444a-22b7-11df-8618-002618dcef2c"
-    "specialty" => "Неврология"
-    "refUid" => "9e8b672a-9975-11e3-87ec-002618dcef2c"
-    "orderDate" => "2021-09-20T00:00:00"
-    "timeBegin" => "2021-09-20T14:00:00"
-    "timeEnd" => "2021-09-20T18:00:00"
-    "name" => "Игорь" 
-    "surname" => "Васильевич" 
-    "middleName" => "Нариманов"
-    "phone" => "8 (999) 555-55-55"
-    "email" => "igor12121@gmail.com"
-    "comment" => "Какой-то текст комментария"
+    "clinicUid" => "f679444a-22b7-11df-8618-002618dcef2c",
+    "specialty" => "Неврология",
+    "refUid" => "9e8b672a-9975-11e3-87ec-002618dcef2c",
+    "orderDate" => "2021-09-20T00:00:00",
+    "timeBegin" => "2021-09-20T14:00:00",
+    "timeEnd" => "2021-09-20T18:00:00",
+    "serviceUid" => "91d8a3f1-d7cf-11e1-bab2-1803736d59cd",
+    "name" => "Игорь",
+    "surname" => "Васильевич" ,
+    "middleName" => "Нариманов",
+    "phone" => "8 (999) 555-55-55",
+    "email" => "igor12121@gmail.com",
+    "comment" => "Какой-то текст комментария",
     "address" => "г. Москва, ул. Пушкина 56"
 ]));
 ```
@@ -445,7 +582,7 @@ When the demo mode is enabled, the application will not make requests to 1C, but
 ```
 
 ## Logging
-You can print logs to screen with `Utils::print($message)` or print to file `with Utils::printLog($message)`. Path to log's file you can set in Variables.php:
+You can print logs to screen with `Utils::print($message)` or print to file with `Utils::printLog($message)`. Path to log's file you can set in Variables.php:
 ```
 const PATH_TO_LOG_FILE = __DIR__."/log.txt";
 ```
