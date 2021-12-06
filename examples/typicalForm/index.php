@@ -15,6 +15,7 @@ $resText = '';
 $errText = [];
 
 $clinics = [];
+$employees = [];
 $schedule = [];
 if (!empty($_POST["action"])){
     $data = RequestController::sendRequest(json_encode($_POST));
@@ -29,7 +30,7 @@ if (!empty($_POST["action"])){
     {
         $errText[] = $clinics["error"];
     }
-
+    $employees = json_decode(RequestController::sendRequest(json_encode(["action" => "GetListEmployees"])), true);
     $schedule = json_decode(RequestController::sendRequest(json_encode(["action" => "GetSchedule"])), true);
 }
 ?>
@@ -54,7 +55,7 @@ if (!empty($_POST["action"])){
                 <fieldset>
                     <div class="input-group mb-1">
                         <select name="clinicUid" class="form-select" required>
-                            <option selected disabled>Select the clinic</option>
+                            <option selected disabled>Выберите клинику</option>
                             <?foreach ($clinics as $clinic):?>
                                 <option value="<?=$clinic["uid"]?>"><?=$clinic["name"]?></option>
                             <?endforeach;?>
@@ -63,8 +64,8 @@ if (!empty($_POST["action"])){
 
                     <div class="input-group mb-1">
                         <select name="specialty" class="form-select" style="display: none;" required>
-                            <option selected disabled>Select the specialty</option>
-                            <?foreach ($schedule["employees"] as $employee):?>
+                            <option selected disabled>Выберите специализацию</option>
+                            <?foreach ($employees as $employee):?>
                                 <option value="<?=$employee["specialty"]?>"><?=$employee["specialty"]?></option>
                             <?endforeach;?>
                         </select>
@@ -72,7 +73,7 @@ if (!empty($_POST["action"])){
 
                     <div class="input-group mb-1">
                         <select name="refUid" class="form-select" style="display: none;" required>
-                            <option selected disabled>Select the reference</option>
+                            <option selected disabled>Выберите врача</option>
                             <?foreach ($schedule["schedule"] as $ref):?>
                                 <option value="<?=$ref["refUid"]?>"
                                         data-clinicUid="<?=$ref['clinicUid']?>"
@@ -92,25 +93,25 @@ if (!empty($_POST["action"])){
                     </div>
 
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="name" placeholder="name" value="John" required>
+                        <input class="form-control" type="text" name="surname" placeholder="Фамилия" value="Петров" required>
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="surname" placeholder="surname" value="Smith" required>
+                        <input class="form-control" type="text" name="name" placeholder="Имя" value="Сергей" required>
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="middleName" placeholder="middleName" value="William" required>
+                        <input class="form-control" type="text" name="middleName" placeholder="Отчество" value="Петрович" required>
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="phone" placeholder="phone" value="8 (999) 666-55-11" required>
+                        <input class="form-control" type="text" name="phone" placeholder="Телефон" value="8 (999) 666-55-11" required>
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="email" name="email" placeholder="email" value="john_smith@gmail.com" required>
+                        <input class="form-control" type="email" name="email" placeholder="Email" value="serg_petrov@gmail.com" required>
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="comment" placeholder="comment" value="Some text about this order">
+                        <input class="form-control" type="text" name="comment" placeholder="Комментарий" value="Можно перенести на более ранее время, если станет свободно">
                     </div>
                     <div class="input-group mb-1">
-                        <input class="form-control" type="text" name="address" placeholder="address" value="London, Red Square Street 15">
+                        <input class="form-control" type="text" name="address" placeholder="Адрес" value="г.Москва, пр-кт Ленина, 15">
                     </div>
 
                     <input type="hidden" name="clientUid" value="<?=$clientUid?>">
@@ -180,7 +181,7 @@ if (!empty($_POST["action"])){
             }
 
             if (clinic && specialty && refUid && schedule){
-                dateTime.innerHTML = '<option selected disabled>Select date and time</option>';
+                dateTime.innerHTML = '<option selected disabled>Выберите время</option>';
                 const filtered = schedule.schedule.filter(item => (item.clinicUid === clinic)&&(item.specialty === specialty)&&(item.refUid === refUid))
                 if(filtered.length){
                     filtered.forEach(fItem => {
