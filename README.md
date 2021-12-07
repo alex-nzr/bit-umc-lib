@@ -463,16 +463,13 @@ $orders = RequestController::sendRequest(json_encode([
 ### Create/Update order
 Request data(json)
 
-If this param `clientUid` is empty and `action=CreateOrder`, 1c will create new client in DB.
+Param `clientUid` is required if param `action=CreateOrder`.
 
 If param `action` = `CreateOrderUnauthorized`, there are two possible ways depending on 1C settings in the integration form.
 
-1. It will fill param `clientUid` from `src/Variables.php` - `UNAUTHORIZED_USER_UID`.  
-If constant `UNAUTHORIZED_USER_UID` is empty or not valid, it will create new user from other params:
-`UNAUTHORIZED_USER_NAME
-UNAUTHORIZED_USER_MIDDLE_NAME
-UNAUTHORIZED_USER_SURNAME
-UNAUTHORIZED_USER_PHONE`
+1. There will be a search for a client by phone number and, if the search is unsuccessful, then the creation of a new client. 
+
+2. All orders will be attached to one client selected in the 1C settings.
    
 2. Not an order will be created, but an entry in the waiting list, which the clinic administrator will process according to the accepted regulations.
 
@@ -482,7 +479,7 @@ If param `orderUid` not empty, 1c will update already existing order.
 
 `serviceUid`, `email`, `comment` and `address` are not required params.
 
-`clientUid` and `orderUid` influence  the logic of saving the document in 1C.
+`action` and `orderUid` influence the logic of saving the document in 1C.
 
 `serviceUid` will add selected service in 1C document. 
 ```

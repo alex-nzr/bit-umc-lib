@@ -222,11 +222,6 @@ class RequestService{
                     . $params['surname'] . "\n"
                     . $params['phone'] ."\n". $params["comment"];
 
-                $params['name'] = Variables::UNAUTHORIZED_USER_NAME;
-                $params['middleName'] = Variables::UNAUTHORIZED_USER_MIDDLE_NAME;
-                $params['surname'] = Variables::UNAUTHORIZED_USER_SURNAME;
-                $params['phone'] = Variables::UNAUTHORIZED_USER_PHONE;
-                $params['clientUid'] = Variables::UNAUTHORIZED_USER_UID;
                 $params['unauthorized'] = "Y";
             }
 

@@ -21,7 +21,9 @@ if (!empty($_POST["action"])){
     $data = RequestController::sendRequest(json_encode($_POST));
     if (is_string($data)){
         $data = json_decode($data, true);
-        $resText = $data['success'] ? "Order was created successfully" : $data['error'];
+        $resText = $data['success'] ? "Заявка создана успешно" : $data['error'];
+        $errorFrom1C = $data['defaultError'];
+        echo "<script>console.log(`".$errorFrom1C."`)</script>";
     }
     //Utils::print($data);
 }else{
@@ -41,7 +43,7 @@ if (!empty($_POST["action"])){
         <div class="row mt-5">
             <?if($resText > ''):?>
                 <p class="text-center"><?=$resText?></p>
-                <p class="text-center"><a href="./index.php" class="icon-link">Back</a></p>
+                <p class="text-center"><a href="./index.php" class="icon-link">Назад</a></p>
             <?elseif(count($errText) > 0):?>
                 <p class="alert alert-warning">
                     <?foreach ($errText as $err):?>
@@ -50,7 +52,7 @@ if (!empty($_POST["action"])){
                 </p>
                 <p class="text-center"><a href="./index.php" class="icon-link">Back</a></p>
             <?else:?>
-                <h2 class="text-center">Select parameters and make an order</h2>
+                <h2 class="text-center">Выберите параметры записи</h2>
                 <form action="" method="post" class="row g-3 align-items-center m-auto" style="max-width: 600px;">
                 <fieldset>
                     <div class="input-group mb-1">
@@ -119,7 +121,7 @@ if (!empty($_POST["action"])){
                 </fieldset>
 
                 <div class="m-auto col-6 mt-2 d-flex justify-content-center">
-                    <button type="submit" class="btn btn-primary container-fluid">Submit</button>
+                    <button type="submit" class="btn btn-primary container-fluid">Отправить</button>
                 </div>
             </form>
             <?endif;?>
