@@ -1,11 +1,11 @@
-<?
+<?php
 
 namespace AlexNzr\BitUmcIntegration;
 
 
 class Variables
 {
-    const DEMO_MODE = "N";
+    const DEMO_MODE = "Y";
 
     const AUTH_LOGIN_1C = 'siteIntegration';
     const AUTH_PASSWORD_1C = '123456';

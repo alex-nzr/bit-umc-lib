@@ -173,11 +173,14 @@ Success response data(json)
     "name": "Юрий",
     "surname": "Безногов",
     "middleName": "Сергеевич",
-    "specialty": "Хирургия",
     "clinic": "Центральная клиника",
     "inSchedule": true,
-    "specialtyUid": "ce182405-5065-11e4-8cb1-c80aa974ec9e",
     "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c",
+    "specialties": {
+        "ce182405-5065-11e4-8cb1-c80aa974ec9e": {
+            "name": "Хирургия"
+        },
+    },
     "services": {
       "dc58bfaf-65b4-11e9-936d-1856809fe650": {
         "title": "Перевязка инфицированной раны малая"
@@ -203,11 +206,17 @@ Success response data(json)
     "name": "Семен",
     "surname": "Малоухов",
     "middleName": "Семенович",
-    "specialty": "Оториноларингология",
     "clinic": "Центральная клиника",
     "inSchedule": true,
-    "specialtyUid": "eebe3e98-233d-11e2-9496-1803736d59cd",
     "clinicUid": "f679444a-22b7-11df-8618-002618dcef2c",
+    "specialties": {
+        "ce558715-4561-11e4-8cb1-c80ee974bf9e": {
+            "name": "Сурдология"
+        },
+        "eebe3e98-233d-11e2-9496-1803736d59cd": {
+            "name": "Оториноларингология"
+        }
+    },
     "services": {
       "ca04032f-9f39-11e6-8221-985fd33a0f52": {
         "title": "Консультация врача-оториноларинголога"

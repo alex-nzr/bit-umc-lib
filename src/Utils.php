@@ -152,6 +152,7 @@ class Utils{
     /** Beautify array of timelines
      * @param $array
      * @param int $duration
+     * @param bool $useDefaultInterval
      * @return array
      */
     public static function formatTimetable($array, int $duration, $useDefaultInterval = false): array

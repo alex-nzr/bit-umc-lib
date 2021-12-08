@@ -2,7 +2,13 @@
 
 window.appointmentWidget = {
 	init: async function(params){
-		this.useServices = (params.useServices === "Y");
+		this.useServices 					= (params.useServices === "Y");
+		this.selectDoctorBeforeService 		= (params.selectDoctorBeforeService === "Y");
+		this.useTimeSteps 					= (params.useTimeSteps === "Y");
+		this.timeStepDuration				= Number(params.timeStepDuration);
+		this.strictCheckingOfRelations		= (params.strictCheckingOfRelations === "Y");
+		this.showDoctorsWithoutDepartment	= (params.showDoctorsWithoutDepartment === "Y");
+
 		this.isUpdate = params.isUpdate;
 		this.ajaxUrl = params.ajaxPath;
 		this.requestParams = {
@@ -57,7 +63,7 @@ window.appointmentWidget = {
 				phone: false,
 				address: false,
 				comment: false,
-			}
+			},
 		}
 		this.defaultText = params.defaultText;
 		this.step = '';
@@ -318,15 +324,37 @@ window.appointmentWidget = {
 			{
 				for (let uid in this.data.employees)
 				{
-					if (this.filledInputs[this.dataKeys.clinicsKey].clinicUid === this.data.employees[uid].clinicUid)
-					{
-						const li = document.createElement('li');
-						if (this.data.employees.hasOwnProperty(uid)){
-							li.textContent = this.data.employees[uid].specialty;
-							li.dataset.uid = this.data.employees[uid].specialtyUid;
-							specialtiesList.append(li);
+					const clinicCondition = (this.filledInputs[this.dataKeys.clinicsKey].clinicUid === this.data.employees[uid].clinicUid);
+					let canRender = true;
+					if(this.strictCheckingOfRelations){
+						canRender = clinicCondition;
+						if (this.showDoctorsWithoutDepartment){
+							canRender = clinicCondition || !this.data.employees[uid].clinicUid;
 						}
 					}
+
+					if (canRender && (Object.keys(this.data.employees[uid]['specialties']).length > 0))
+					{
+						const specialties = this.data.employees[uid]['specialties'];
+						for (let specialtyUid in specialties)
+						{
+							if (specialties.hasOwnProperty(specialtyUid)){
+								const alreadyRendered = specialtiesList.querySelector(`[data-uid="${specialtyUid}"]`);
+								if (!alreadyRendered){
+									const li = document.createElement('li');
+									li.textContent = specialties[specialtyUid].name;
+									li.dataset.uid = specialtyUid;
+									specialtiesList.append(li);
+								}
+							}
+						}
+					}
+				}
+				if (specialtiesList.children.length === 0){
+					const span = document.createElement('span');
+					span.classList.add("empty-selection-message");
+					span.textContent = `В данной клинике не найдено направлений деятельности`;
+					specialtiesList.append(span);
 				}
 				this.addListActions(this.dataKeys.specialtiesKey);
 			}
@@ -347,7 +375,14 @@ window.appointmentWidget = {
 			{
 				for (let uid in this.data.services)
 				{
-					if (this.filledInputs[this.dataKeys.specialtiesKey].specialtyUid === this.data.services[uid].specialtyUid)
+					let renderCondition = (this.filledInputs[this.dataKeys.specialtiesKey].specialtyUid
+											=== this.data.services[uid].specialtyUid);
+					if (this.selectDoctorBeforeService){
+						const selectedEmployeeUid = this.filledInputs[this.dataKeys.employeesKey].refUid;
+						renderCondition = renderCondition && this.data.employees[selectedEmployeeUid].services.hasOwnProperty(uid);
+					}
+
+					if (renderCondition)
 					{
 						const li = document.createElement('li');
 						const price = Number((this.data.services[uid]['price']).replace(/\s+/g, ''));
@@ -361,6 +396,12 @@ window.appointmentWidget = {
 							servicesList.append(li);
 						}
 					}
+				}
+				if (servicesList.children.length === 0){
+					const span = document.createElement('span');
+					span.classList.add("empty-selection-message");
+					span.textContent = `К сожалению, по выбранным параметрам нет подходящих услуг`;
+					servicesList.append(span);
 				}
 				this.addListActions(this.dataKeys.servicesKey);
 			}
@@ -382,9 +423,28 @@ window.appointmentWidget = {
 				{
 					if (this.data.employees.hasOwnProperty(uid))
 					{
-						if (this.filledInputs[this.dataKeys.specialtiesKey].specialty === this.data.employees[uid].specialty)
+						const selectedSpecialty = this.filledInputs[this.dataKeys.specialtiesKey].specialtyUid;
+						const selectedClinic = this.filledInputs[this.dataKeys.clinicsKey].clinicUid;
+						const specialtyCondition = this.data.employees[uid]['specialties'].hasOwnProperty(selectedSpecialty);
+						const clinicCondition = selectedClinic === this.data.employees[uid].clinicUid;
+
+						let canRender = specialtyCondition;
+
+						if(this.strictCheckingOfRelations){
+							if (this.showDoctorsWithoutDepartment){
+								canRender = (specialtyCondition && !this.data.employees[uid].clinicUid)
+											||
+											(specialtyCondition && clinicCondition);
+							}
+							else
+							{
+								canRender = specialtyCondition && clinicCondition;
+							}
+						}
+
+						if (canRender)
 						{
-							if (this.useServices)
+							if (this.useServices && !this.selectDoctorBeforeService)
 							{
 								const selectedServiceUid = this.filledInputs[this.dataKeys.servicesKey].serviceUid;
 								if (!this.data.employees[uid].services.hasOwnProperty(selectedServiceUid)){
@@ -393,7 +453,6 @@ window.appointmentWidget = {
 							}
 							const li = document.createElement('li');
 							li.dataset.uid = uid;
-							li.dataset.specialty = this.data.employees[uid].specialty;
 							li.textContent = `${this.data.employees[uid].surname} 
 												${this.data.employees[uid].name} 
 												${this.data.employees[uid].middleName}`;
@@ -470,6 +529,12 @@ window.appointmentWidget = {
 					}
 				}
 			});
+			if (scheduleList.children.length === 0){
+				const span = document.createElement('span');
+				span.classList.add("empty-selection-message");
+				span.textContent = `К сожалению, у данного специалиста нет записи в выбранном филиале на ближайшее время`;
+				scheduleList.append(span);
+			}
 			this.addListActions(this.dataKeys.scheduleKey);
 		}
 		else
@@ -487,35 +552,40 @@ window.appointmentWidget = {
 			const appointmentsCount = Math.floor(timeDifference / serviceDurationMs);
 			if (appointmentsCount > 0)
 			{
-				//with time step = 15 minutes
-				let start = new Date(timestampTimeBegin);
-				let end = new Date(timestampTimeBegin + serviceDurationMs);
-				while(end.getTime() <= timestampTimeEnd){
-					newIntervals.push({
-						"date": 				day.date,
-						"timeBegin": 			this.convertDateToISO(start),
-						"timeEnd": 				this.convertDateToISO(end),
-						"formattedDate": 		this.convertDateToDisplay(start, false),
-						"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
-						"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
-					});
-					start.setMinutes(start.getMinutes() + 15);
-					end.setMinutes(end.getMinutes() + 15);
-				}
-				//without time steps
-				/*for (let i = 0; i < appointmentsCount; i++)
+				if (this.useTimeSteps)
 				{
-					let start = new Date(timestampTimeBegin + (serviceDurationMs * i));
-					let end = new Date(timestampTimeBegin + (serviceDurationMs * (i+1)));
-					newIntervals.push({
-						"date": 				day.date,
-						"timeBegin": 			this.convertDateToISO(start),
-						"timeEnd": 				this.convertDateToISO(end),
-						"formattedDate": 		this.convertDateToDisplay(start, false),
-						"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
-						"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
-					});
-				}*/
+					let start = new Date(timestampTimeBegin);
+					let end = new Date(timestampTimeBegin + serviceDurationMs);
+					while(end.getTime() <= timestampTimeEnd){
+						newIntervals.push({
+							"date": 				day.date,
+							"timeBegin": 			this.convertDateToISO(start),
+							"timeEnd": 				this.convertDateToISO(end),
+							"formattedDate": 		this.convertDateToDisplay(start, false),
+							"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
+							"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
+						});
+						start.setMinutes(start.getMinutes() + this.timeStepDuration);
+						end.setMinutes(end.getMinutes() + this.timeStepDuration);
+					}
+				}
+				else
+				{
+					for (let i = 0; i < appointmentsCount; i++)
+					{
+						let start = new Date(timestampTimeBegin + (serviceDurationMs * i));
+						let end = new Date(timestampTimeBegin + (serviceDurationMs * (i+1)));
+						newIntervals.push({
+							"date": 				day.date,
+							"timeBegin": 			this.convertDateToISO(start),
+							"timeEnd": 				this.convertDateToISO(end),
+							"formattedDate": 		this.convertDateToDisplay(start, false),
+							"formattedTimeBegin": 	this.convertDateToDisplay(start, true),
+							"formattedTimeEnd": 	this.convertDateToDisplay(end, true),
+						});
+					}
+				}
+
 			}
 		});
 		return newIntervals;
@@ -578,18 +648,26 @@ window.appointmentWidget = {
 			case this.dataKeys.specialtiesKey:
 				this.filledInputs[dataKey].specialty = target.textContent;
 				this.filledInputs[dataKey].specialtyUid = target.dataset.uid;
-				this.useServices ? this.renderServicesList() : this.renderEmployeesList();
+				if(this.useServices){
+					if (this.selectDoctorBeforeService){
+						this.renderEmployeesList();
+					}else{
+						this.renderServicesList();
+					}
+				}else{
+					this.renderEmployeesList();
+				}
 				break;
 			case this.dataKeys.servicesKey:
 				this.filledInputs[dataKey].serviceName = target.textContent;
 				this.filledInputs[dataKey].serviceUid = target.dataset.uid;
 				this.filledInputs[dataKey].serviceDuration = target.dataset.duration;
-				this.renderEmployeesList();
+				this.selectDoctorBeforeService ? this.renderScheduleList(): this.renderEmployeesList();
 				break;
 			case this.dataKeys.employeesKey:
 				this.filledInputs[dataKey].doctorName = target.textContent;
 				this.filledInputs[dataKey].refUid = target.dataset.uid;
-				this.renderScheduleList();
+				this.selectDoctorBeforeService ? this.renderServicesList() : this.renderScheduleList();
 				break;
 			case this.dataKeys.scheduleKey:
 				this.filledInputs[dataKey].orderDate = target.dataset.date;

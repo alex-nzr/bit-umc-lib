@@ -67,8 +67,15 @@ if (!empty($_POST["action"])){
                     <div class="input-group mb-1">
                         <select name="specialty" class="form-select" style="display: none;" required>
                             <option selected disabled>Выберите специализацию</option>
-                            <?foreach ($employees as $employee):?>
-                                <option value="<?=$employee["specialty"]?>"><?=$employee["specialty"]?></option>
+                            <?
+                            $alreadyRendered = [];
+                            foreach ($employees as $employee):?>
+                                <?foreach ($employee["specialties"] as $specialty):?>
+                                    <?if(array_search($specialty['name'], $alreadyRendered) === false):?>
+                                        <option value="<?=$specialty['name']?>"><?=$specialty['name']?></option>
+                                        <?$alreadyRendered[] = $specialty['name'];?>
+                                    <?endif;?>
+                                <?endforeach;?>
                             <?endforeach;?>
                         </select>
                     </div>
@@ -129,6 +136,7 @@ if (!empty($_POST["action"])){
     </div>
 
     <script>
+        'use strict';
         const schedule = JSON.parse('<?=json_encode($schedule)?>');
         if (!schedule.error){
             const clinic = document.querySelector('select[name="clinicUid"]');
@@ -158,7 +166,14 @@ if (!empty($_POST["action"])){
             let enabled = select.querySelectorAll(selector);
 
             all.forEach(item=>item.style.display = 'none')
-            enabled.forEach(item=>item.style.display = '')
+            enabled.length && enabled.forEach(item=>item.style.display = '')
+
+            if (!enabled.length){
+                const option = document.createElement('option')
+                option.textContent = `Нет вариантов по выбранным параметрам`;
+                option.disabled = true;
+                select.append(option);
+            }
 
             const dateTime = document.querySelector('[name="dateTime"]');
             if (clinic){
@@ -204,7 +219,6 @@ if (!empty($_POST["action"])){
                         }
                     })
                 }
-
             }
         }
     </script>

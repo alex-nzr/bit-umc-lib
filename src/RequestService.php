@@ -1,6 +1,8 @@
 <?php
 namespace AlexNzr\BitUmcIntegration;
 
+use Exception;
+
 class RequestService{
 
     private static string $baseurl = Variables::PROTOCOL . Variables::COLON . Variables::D_SEP .
@@ -239,6 +241,7 @@ class RequestService{
         if (!empty($params["orderUid"])){
             return self::post('CancelOrder', $params);
         }
+        return Utils::addError('orderUid is empty');
     }
 
     /** make request to update client's data
@@ -309,7 +312,7 @@ class RequestService{
                     return Utils::addError("Wrong response - " . json_encode($response));
                 }
             }
-            catch (\Exception $e)
+            catch (Exception $e)
             {
                 return Utils::addError($e->getMessage());
             }

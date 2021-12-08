@@ -7,6 +7,15 @@ if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php'))
 }
 else
 {
+    //options
+    $useServices                    = "Y";
+    $selectDoctorBeforeService      = "Y";
+    $useTimeSteps                   = "N";
+    $timeStepDuration               = 15;   //minutes
+    $strictCheckingOfRelations      = "Y";  //strict verification of the binding of employees to the clinic and specializations to the clinic
+    $showDoctorsWithoutDepartment   = "Y";
+    //endOptions
+
     $ajaxPath = substr(realpath(__DIR__.'/ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
     $ajaxPath = explode(DIRECTORY_SEPARATOR, $ajaxPath);
     $ajaxPath = implode("/", $ajaxPath);
@@ -28,29 +37,79 @@ else
     $submitBtnId = "appointment-form-button";
     $appResultBlockId = "appointment-result-block";
 
-    $nameInputId = "appointment-form-name";
-    $middleNameInputId = "appointment-form-middleName";
-    $surnameInputId = "appointment-form-surname";
-    $phoneInputId = "appointment-form-phone";
-    $commentInputId = "appointment-form-comment";
-
     $clinicsKey = "FILIAL";
     $specialtiesKey = "SPECIALTY";
     $servicesKey = "SERVICE";
     $employeesKey = "DOCTOR";
     $scheduleKey = "DATE_TIME";
 
-    $blocksInfo = [
+    $selectionBlocks = [
         $clinicsKey => "Выберите клинику",
         $specialtiesKey => "Выберите специализацию",
-        $servicesKey => "Выберите услугу",
-        $employeesKey => "Выберите врача",
-        $scheduleKey => "Выберите время"
+    ];
+    if ($selectDoctorBeforeService === "Y"){
+        $selectionBlocks[$employeesKey] = "Выберите врача";
+        $selectionBlocks[$servicesKey] = "Выберите услугу";
+    }
+    else{
+        $selectionBlocks[$servicesKey] = "Выберите услугу";
+        $selectionBlocks[$employeesKey] = "Выберите врача";
+    }
+    $selectionBlocks[$scheduleKey] = "Выберите время";
+
+    $textBlocks = [
+        [
+            "type" => "text",
+            "placeholder" => "Имя *",
+            "id" => "appointment-form-name",
+            "maxlength" => "30",
+            "class" => "appointment-form_input",
+            "name" => "name",
+        ],
+        [
+            "type" => "text",
+            "placeholder" => "Отчество *",
+            "id" => "appointment-form-middleName",
+            "maxlength" => "30",
+            "class" => "appointment-form_input",
+            "name" => "surname",
+        ],
+        [
+            "type" => "text",
+            "placeholder" => "Фамилия *",
+            "id" => "appointment-form-surname",
+            "maxlength" => "30",
+            "class" => "appointment-form_input",
+            "name" => "middleName",
+        ],
+        [
+            "type" => "tel",
+            "placeholder" => "Телефон *",
+            "id" => "appointment-form-phone",
+            "maxlength" => "30",
+            "class" => "appointment-form_input",
+            "name" => "phone",
+            "autocomplete" => "new-password",
+            "aria-autocomplete" => "list"
+        ],
+        [
+            "placeholder" => "Комментарий",
+            "id" => "appointment-form-comment",
+            "maxlength" => "300",
+            "class" => "appointment-form_textarea",
+            "name" => "comment",
+        ]
     ];
 ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="<?=$styleHref?>?<?=filemtime($styleRealPath)?>">
-<script src="<?=$scriptSrc?>?<?=filemtime($scriptRealPath)?>"></script>
+<link rel="stylesheet" href="<?=$styleHref?>?<?=fileMTime($styleRealPath)?>">
+<script src="<?=$scriptSrc?>?<?=fileMTime($scriptRealPath)?>"></script>
+
+<script>
+    const selectionNodes = {};
+    const textNodes = {};
+    const defaultText = {};
+</script>
 
 <div class="widget-wrapper" id="<?=$wrapperId?>">
     <div class="appointment-button-wrapper loading" id="<?=$widgetBtnWrapId?>">
@@ -63,33 +122,39 @@ else
     </div>
 
     <form id="<?=$formId?>" class="appointment-form">
-        <?foreach($blocksInfo as $key => $text):?>
+        <?foreach($selectionBlocks as $key => $text):?>
             <div class="selection-block <?=($key !== $clinicsKey ? 'hidden' : '')?>" id="<?=$key?>_block">
                 <p class="selection-item-selected" id="<?=$key?>_selected"><?=$text?></p>
                 <ul class="appointment-form_head_list selection-item-list" id="<?=$key?>_list"></ul>
                 <input type="hidden" name="<?=$key?>" id="<?=$key?>_value">
             </div>
+            <script>
+                selectionNodes['<?=$key?>'] = {
+                    "blockId": "<?=$key?>_block",
+                    "listId": "<?=$key?>_list",
+                    "selectedId": "<?=$key?>_selected",
+                    "inputId": "<?=$key?>_value",
+                    "isRequired": <?=($key === $servicesKey ? 'false' : 'true')?>
+                }
+                defaultText['<?=$key?>'] = '<?=$text?>';
+            </script>
         <?endforeach;?>
 
-        <label class="appointment-form_input-wrapper">
-            <input type="text" class="appointment-form_input" placeholder="Имя *" id="<?=$nameInputId?>" maxlength="30">
-        </label>
-
-        <label class="appointment-form_input-wrapper">
-            <input type="text" class="appointment-form_input" placeholder="Отчество *" id="<?=$middleNameInputId?>" maxlength="30">
-        </label>
-
-        <label class="appointment-form_input-wrapper">
-            <input type="text" class="appointment-form_input" placeholder="Фамилия *" id="<?=$surnameInputId?>" maxlength="30">
-        </label>
-
-        <label class="appointment-form_input-wrapper">
-            <input type="tel" class="appointment-form_input" placeholder="Телефон *" id="<?=$phoneInputId?>" autocomplete="new-password" aria-autocomplete="list">
-        </label>
-
-        <label class="appointment-form_input-wrapper">
-            <textarea class="appointment-form_textarea" placeholder="Комментарий" id="<?=$commentInputId?>" maxlength="300"></textarea>
-        </label>
+        <?foreach($textBlocks as $blockAttrs):?>
+            <label class="appointment-form_input-wrapper">
+                <?if(!empty($blockAttrs["type"])):?>
+                    <input <?foreach($blockAttrs as $attrName => $attrValue){ echo $attrName.'='.'"'.$attrValue.'"'; }?>/>
+                <?else:?>
+                    <textarea <?foreach($blockAttrs as $attrName => $attrValue){ echo $attrName.'='.'"'.$attrValue.'"'; }?>></textarea>
+                <?endif;?>
+            </label>
+            <script>
+                textNodes["<?=$blockAttrs["name"]?>"] = {
+                    "inputId": "<?=$blockAttrs["id"]?>",
+                    "isRequired": <?=($blockAttrs["name"] === "comment" ? 'false' : 'true')?>
+                };
+            </script>
+        <?endforeach;?>
 
         <p id="<?=$messageNodeId?>"></p>
 
@@ -103,7 +168,12 @@ else
     <script>
         document.addEventListener('DOMContentLoaded', ()=>{
             window.appointmentWidget.init({
-                "useServices": "Y",
+                "useServices": '<?=$useServices?>',
+                "selectDoctorBeforeService": '<?=$selectDoctorBeforeService?>',
+                "useTimeSteps": '<?=$useTimeSteps?>',
+                "strictCheckingOfRelations": '<?=$strictCheckingOfRelations?>',
+                "showDoctorsWithoutDepartment": '<?=$showDoctorsWithoutDepartment?>',
+                "timeStepDuration": '<?=$timeStepDuration?>',
                 "ajaxPath": '<?=$ajaxPath?>',
                 "widgetBtnWrapId": '<?=$widgetBtnWrapId?>',
                 "wrapperId": "<?=$wrapperId?>",
@@ -119,72 +189,9 @@ else
                     "employeesKey": '<?=$employeesKey?>',
                     "scheduleKey": '<?=$scheduleKey?>',
                 },
-                "selectionNodes": {
-                    ['<?=$clinicsKey?>']: {
-                        "blockId": "<?=$clinicsKey?>_block",
-                        "listId": "<?=$clinicsKey?>_list",
-                        "selectedId": "<?=$clinicsKey?>_selected",
-                        "inputId": "<?=$clinicsKey?>_value",
-                        "isRequired": true
-                    },
-                    ['<?=$specialtiesKey?>']: {
-                        "blockId": "<?=$specialtiesKey?>_block",
-                        "listId": "<?=$specialtiesKey?>_list",
-                        "selectedId": "<?=$specialtiesKey?>_selected",
-                        "inputId": "<?=$specialtiesKey?>_value",
-                        "isRequired": true
-                    },
-                    ['<?=$servicesKey?>']: {
-                        "blockId": "<?=$servicesKey?>_block",
-                        "listId": "<?=$servicesKey?>_list",
-                        "selectedId": "<?=$servicesKey?>_selected",
-                        "inputId": "<?=$servicesKey?>_value",
-                        "isRequired": true
-                    },
-                    ['<?=$employeesKey?>']: {
-                        "blockId": "<?=$employeesKey?>_block",
-                        "listId": "<?=$employeesKey?>_list",
-                        "selectedId": "<?=$employeesKey?>_selected",
-                        "inputId": "<?=$employeesKey?>_value",
-                        "isRequired": true
-                    },
-                    ['<?=$scheduleKey?>']: {
-                        "blockId": "<?=$scheduleKey?>_block",
-                        "listId": "<?=$scheduleKey?>_list",
-                        "selectedId": "<?=$scheduleKey?>_selected",
-                        "inputId": "<?=$scheduleKey?>_value",
-                        "isRequired": true
-                    }
-                },
-                "textNodes": {
-                    "name": {
-                        "inputId": "<?=$nameInputId?>",
-                        "isRequired": true
-                    },
-                    "surname": {
-                        "inputId": "<?=$surnameInputId?>",
-                        "isRequired": true
-                    },
-                    "middleName": {
-                        "inputId": "<?=$middleNameInputId?>",
-                        "isRequired": true
-                    },
-                    "phone": {
-                        "inputId": "<?=$phoneInputId?>",
-                        "isRequired": true
-                    },
-                    "comment": {
-                        "inputId": "<?=$commentInputId?>",
-                        "isRequired": false
-                    },
-                },
-                "defaultText": {
-                    ['<?=$clinicsKey?>']: '<?=$blocksInfo[$clinicsKey]?>',
-                    ['<?=$specialtiesKey?>']: '<?=$blocksInfo[$specialtiesKey]?>',
-                    ['<?=$servicesKey?>']: '<?=$blocksInfo[$servicesKey]?>',
-                    ['<?=$employeesKey?>']: '<?=$blocksInfo[$employeesKey]?>',
-                    ['<?=$scheduleKey?>']: '<?=$blocksInfo[$scheduleKey]?>',
-                },
+                "selectionNodes": selectionNodes,
+                "textNodes": textNodes,
+                "defaultText": defaultText,
                 "isUpdate": false,
             });
         })

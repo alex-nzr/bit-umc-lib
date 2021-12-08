@@ -1,6 +1,8 @@
 <?php
 namespace AlexNzr\BitUmcIntegration;
 
+use Exception;
+
 class RequestController{
 
     protected function __construct(){}
@@ -24,7 +26,7 @@ class RequestController{
                 return Utils::addError('Action is empty');
             }
         }
-        catch(\Exception $e)
+        catch(Exception $e)
         {
             return Utils::addError($e->getMessage());
         }
