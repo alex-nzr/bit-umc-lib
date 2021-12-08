@@ -276,7 +276,7 @@ window.appointmentWidget = {
 			}
 			setTimeout(()=>{
 				this.toggleLoader(false);
-			}, 3550)
+			}, 300)
 		}
 		else
 		{
@@ -484,7 +484,16 @@ window.appointmentWidget = {
 					&& employeeSchedule.refUid === this.filledInputs[this.dataKeys.employeesKey].refUid
 				)
 				{
-					const serviceDuration = Number(this.filledInputs[this.dataKeys.servicesKey].serviceDuration);
+					const selectedEmployee = this.data.employees[employeeSchedule.refUid];
+					const selectedService = this.filledInputs[this.dataKeys.servicesKey];
+					let serviceDuration = Number(selectedService.serviceDuration);
+					if(selectedEmployee.services.hasOwnProperty(selectedService.serviceUid))
+					{
+						if (selectedEmployee.services[selectedService.serviceUid].hasOwnProperty("personalDuration")){
+							const personalDuration = selectedEmployee.services[selectedService.serviceUid]["personalDuration"];
+							serviceDuration = Number(personalDuration) > 0 ? Number(personalDuration) : serviceDuration;
+						}
+					}
 					const renderCustomIntervals = this.useServices && (serviceDuration > 0);
 					const timeKey = renderCustomIntervals ? "freeNotFormatted" : "free";
 
@@ -667,7 +676,15 @@ window.appointmentWidget = {
 			case this.dataKeys.employeesKey:
 				this.filledInputs[dataKey].doctorName = target.textContent;
 				this.filledInputs[dataKey].refUid = target.dataset.uid;
-				this.selectDoctorBeforeService ? this.renderServicesList() : this.renderScheduleList();
+				if(this.useServices){
+					if (this.selectDoctorBeforeService){
+						this.renderServicesList();
+					}else{
+						this.renderScheduleList();
+					}
+				}else{
+					this.renderScheduleList();
+				}
 				break;
 			case this.dataKeys.scheduleKey:
 				this.filledInputs[dataKey].orderDate = target.dataset.date;
@@ -687,7 +704,7 @@ window.appointmentWidget = {
 		if (this.checkRequiredFields())
 		{
 			this.submitBtn.classList.add('loading');
-			let orderData = { 'action': 'CreateOrder',  ...this.filledInputs.textValues};
+			let orderData = { 'action': 'CreateOrderUnauthorized',  ...this.filledInputs.textValues};
 			for (let key in this.selectionNodes)
 			{
 				if (this.selectionNodes.hasOwnProperty(key) && this.filledInputs.hasOwnProperty(key))
