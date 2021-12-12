@@ -126,7 +126,7 @@ body{
 	transform: translateY(-50%);
 	width: 10px;
 	height: 10px;
-	background: url(../img/dropdown.svg) center center/contain no-repeat;
+	background: url("../static/img/dropdown.svg") center center/contain no-repeat;
 	cursor: pointer;
 }
 .widget-wrapper .selection-item-selected span{
@@ -243,7 +243,7 @@ body{
 	left: 50%;
 	transform: translate(-50%, -50%); 
 	transition: .2s;
-	background: url(../img/reload.svg) center center/contain no-repeat;
+	background: url("../static/img/reload.svg") center center/contain no-repeat;
 	pointer-events: none;
 	animation: rotating 1s linear infinite;
 	opacity: 0;
@@ -308,7 +308,7 @@ body{
 	transform: translate(-50%, 0%); 
 	transition: .2s;
 	border-radius: 50%;
-	background: url("../img/success.svg") center center/contain no-repeat;
+	background: url("../static/img/success.svg") center center/contain no-repeat;
 	pointer-events: none;
 }
 .widget-wrapper #appointment-result-block p a{
@@ -370,13 +370,13 @@ body{
 	width: 100%;
 	height: 100%;
 	border-radius: 50%;
-	background: url("../img/medical-appointment.svg") center center/contain no-repeat #025ea1;
+	background: url("../static/img/medical-appointment.svg") center center/contain no-repeat #025ea1;
 	z-index: 1;
 	cursor: pointer;
 	transition: .2s;
 }
 .widget-wrapper #appointment-button.active{
-	background: url("../img/cancel.svg") center center/contain no-repeat;
+	background: url("../static/img/cancel.svg") center center/contain no-repeat;
 	box-shadow: 0 0 5px 1px #18538E;
 	padding: 0;
 	color: transparent;
@@ -390,7 +390,7 @@ body{
 }
 
 .widget-wrapper #appointment-button.success{
-	background: url("../img/success.svg") center center/contain no-repeat #025ea1;
+	background: url("../static/img/success.svg") center center/contain no-repeat #025ea1;
 	box-shadow: none;
 	padding: 0;
 	color: transparent;

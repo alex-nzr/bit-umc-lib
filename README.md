@@ -25,7 +25,7 @@ Download [latest version](https://github.com/alex-nzr/bit-umc-lib/archive/refs/h
 ## Usage
 
 ### Install 1C extension
-At first go to `1cExtension/siteIntegration.cfe` and insert this extension in your 1c base.
+At first download `siteIntegration.cfe` and insert this extension in your 1c base.
 Then publish it on web-server.
 
 ### Fill required options
@@ -55,7 +55,8 @@ Success response data(json)
         "middlename": "Николаевич",
         "inn": "1211321231",
         "snils": "030-213132121",
-        "birthday": "10-04-1967",
+        "birthday": "1967-04-10T00:00:00",
+        "displayBirthday": "10-04-1967",
         "gender": "M",
         "uid": "d4f6fdf5-38a6-11e4-8012-20cf3029e98b",
         "isAppointmentBlocked": "N",
@@ -63,7 +64,19 @@ Success response data(json)
             "phone": "+71234567890",
             "emailHome": "example_home@gmail.com"
             "emailWork": "example_work@gmail.com"
-        }
+        },
+        "relatives": [
+            {
+                "uid": "20cf30-38a6-11e4-8012-20cf3029e98b",
+                "name": "Ахмин Иван Аркадьевич"
+                "relation": "Сын"
+            },
+            {
+                "uid": "9e98b0-38a6-11e4-8012-20cf3029e98b",
+                "name": "Иванова Ксения Николаевна"
+                "relation": "Сестра"
+            },
+        ]
     }
 ]
 ```

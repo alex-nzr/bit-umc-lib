@@ -10,7 +10,7 @@ else{ die("integration library not found"); }
 
 use AlexNzr\BitUmcIntegration\RequestController;
 use AlexNzr\BitUmcIntegration\Utils;
-
+Utils::print(json_decode(RequestController::sendRequest(json_encode(["action"=>"GetListClients"])),true));
 $resText = '';
 $errText = [];
 

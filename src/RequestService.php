@@ -27,7 +27,7 @@ class RequestService{
             {
                 if (!empty($client["birthday"]))
                 {
-                    $clients[$key]["birthday"] = date("d-m-Y", strtotime($client["birthday"]));
+                    $clients[$key]["displayBirthday"] = date("d-m-Y", strtotime($client["birthday"]));
                 }
 
                 if (is_array($client["contacts"]))
@@ -44,7 +44,7 @@ class RequestService{
                     }
                 }
 
-                foreach ($client as $param => $value){
+                foreach ($clients[$key] as $param => $value){
                     if (is_string($value)){
                         $clients[$key][$param] = trim($value);
                     }

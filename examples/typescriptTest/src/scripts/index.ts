@@ -1,7 +1,21 @@
-'use strict';
+import styles from "../styles/style.scss"
+import getProjectSettings from "../settings";
+
+const params = {
+	wrapperId:                    'appointment-widget-wrapper',
+	widgetBtnWrapId:              styles["appointment-button-wrapper"],
+	widgetBtnId:                  styles['appointment-button'],
+	formId:                       styles['appointment-form'],
+	messageNodeId:                styles['appointment-form-message'],
+	submitBtnId:                  styles['appointment-form-button'],
+	appResultBlockId:             styles['appointment-result-block'],
+	inputClass:					  styles['appointment-form_input'],
+	textareaClass:				  styles['appointment-form_textarea'],
+}
+const settings = getProjectSettings(params);
 
 window.appointmentWidget = {
-	init: async function(params){
+	init: function(params){
 		this.useServices 					= (params.useServices === "Y");
 		this.selectDoctorBeforeService 		= (params.selectDoctorBeforeService === "Y");
 		this.useTimeSteps 					= (params.useTimeSteps === "Y");
@@ -79,7 +93,7 @@ window.appointmentWidget = {
 		this.initSelectionNodes(params.selectionNodes);
 		this.initTextNodes(params.textNodes);
 		this.addPhoneMasks();
-		await this.start();
+		this.start().then(r => void(0));
 	},
 
 	initForm: function(id){
@@ -119,7 +133,7 @@ window.appointmentWidget = {
 				const input = this.wrapper.querySelector(`#${nodesData[nodesDataKey].inputId}`);
 				input && input.addEventListener('input', (e)=> {
 					this.filledInputs.textValues[nodesDataKey] = e.target.value;
-				})
+				});
 				this.textNodes[nodesDataKey] = {
 					inputNode: input,
 				}
@@ -352,7 +366,7 @@ window.appointmentWidget = {
 				}
 				if (specialtiesList.children.length === 0){
 					const span = document.createElement('span');
-					span.classList.add("empty-selection-message");
+					span.classList.add(styles["empty-selection-message"]);
 					span.textContent = `В данной клинике не найдено направлений деятельности`;
 					specialtiesList.append(span);
 				}
@@ -399,7 +413,7 @@ window.appointmentWidget = {
 				}
 				if (servicesList.children.length === 0){
 					const span = document.createElement('span');
-					span.classList.add("empty-selection-message");
+					span.classList.add(styles["empty-selection-message"]);
 					span.textContent = `К сожалению, по выбранным параметрам нет подходящих услуг`;
 					servicesList.append(span);
 				}
@@ -462,7 +476,7 @@ window.appointmentWidget = {
 				}
 				if (empList.children.length === 0){
 					const span = document.createElement('span');
-					span.classList.add("empty-selection-message");
+					span.classList.add(styles["empty-selection-message"]);
 					span.textContent = `К сожалению, по выбранным параметрам на ближайшее время нет свободных специалистов`;
 					empList.append(span);
 				}
@@ -508,7 +522,7 @@ window.appointmentWidget = {
 							if (customIntervals.length === 0)
 							{
 								const span = document.createElement('span');
-								span.classList.add("empty-selection-message");
+								span.classList.add(styles["empty-selection-message"]);
 								span.textContent = `К сожалению, запись на данную услугу к выбранному специалисту невозможна на ближайшее время`;
 								scheduleList.append(span);
 								return;
@@ -532,7 +546,7 @@ window.appointmentWidget = {
 						});
 					}else{
 						const span = document.createElement('span');
-						span.classList.add("empty-selection-message");
+						span.classList.add(styles["empty-selection-message"]);
 						span.textContent = `К сожалению, у данного специалиста нет записи в выбранном филиале на ближайшее время`;
 						scheduleList.append(span);
 					}
@@ -540,7 +554,7 @@ window.appointmentWidget = {
 			});
 			if (scheduleList.children.length === 0){
 				const span = document.createElement('span');
-				span.classList.add("empty-selection-message");
+				span.classList.add(styles["empty-selection-message"]);
 				span.textContent = `К сожалению, у данного специалиста нет записи в выбранном филиале на ближайшее время`;
 				scheduleList.append(span);
 			}
@@ -610,19 +624,19 @@ window.appointmentWidget = {
 
 		if (selected && list)
 		{
-			if (!selected.classList.contains('activated')) {
+			if (!selected.classList.contains(styles['activated'])) {
 				selected.addEventListener('click', ()=>{
-					list.classList.toggle('active');
+					list.classList.toggle(styles['active']);
 					for (const nodesKey in this.selectionNodes) {
 						if (
 							this.selectionNodes.hasOwnProperty(nodesKey)
 							&& nodesKey !== dataKey
 						){
-							this.selectionNodes[nodesKey].listNode.classList.remove('active');
+							this.selectionNodes[nodesKey].listNode.classList.remove(styles['active']);
 						}
 					}
 				})
-				selected.classList.add('activated');
+				selected.classList.add(styles['activated']);
 			}
 			this.eventHandlersAdded[dataKey] = true;
 			this.addItemActions(dataKey);
@@ -639,7 +653,7 @@ window.appointmentWidget = {
 		}
 		for (let item of items) {
 			item.addEventListener('click', (e)=>{
-				this.selectionNodes[dataKey].listNode.classList.toggle('active');
+				this.selectionNodes[dataKey].listNode.classList.toggle(styles['active']);
 				this.selectionNodes[dataKey].selectedNode.innerHTML = `<span>${e.currentTarget.textContent}</span>`;
 				this.changeStep(dataKey, e.currentTarget);
 				this.activateBlocks();
@@ -703,7 +717,7 @@ window.appointmentWidget = {
 
 		if (this.checkRequiredFields())
 		{
-			this.submitBtn.classList.add('loading');
+			this.submitBtn.classList.add(styles['loading']);
 			let orderData = { 'action': 'CreateOrderUnauthorized',  ...this.filledInputs.textValues};
 			for (let key in this.selectionNodes)
 			{
@@ -745,7 +759,7 @@ window.appointmentWidget = {
 				}
 				else if(result.success)
 				{
-					this.submitBtn.classList.remove('loading');
+					this.submitBtn.classList.remove(styles['loading']);
 					this.finalizingWidget(true);
 				}
 				else
@@ -792,14 +806,14 @@ window.appointmentWidget = {
 			{
 				const block = this.selectionNodes[nodesKey].blockNode;
 				if (!current && !next){
-					block.classList.remove("hidden")
+					block.classList.remove(styles["hidden"])
 				}
 				else if (current && !next){
-					block.classList.remove("hidden")
+					block.classList.remove(styles["hidden"])
 					this.resetValue(nodesKey);
 				}
 				else{
-					block.classList.add("hidden");
+					block.classList.add(styles["hidden"]);
 					this.resetValue(nodesKey);
 				}
 				next = (current === true);
@@ -823,9 +837,9 @@ window.appointmentWidget = {
 
 	toggleLoader: function(on = true){
 		if (on){
-			this.widgetBtnWrap.classList.add('loading');
+			this.widgetBtnWrap.classList.add(styles['loading']);
 		}else{
-			this.widgetBtnWrap.classList.remove('loading');
+			this.widgetBtnWrap.classList.remove(styles['loading']);
 		}
 	},
 
@@ -834,8 +848,8 @@ window.appointmentWidget = {
 	},
 
 	showWidget: function () {
-		this.form.classList.toggle('active');
-		this.widgetBtn.classList.toggle('active');
+		this.form.classList.toggle(styles['active']);
+		this.widgetBtn.classList.toggle(styles['active']);
 	},
 
 	errorMessage: function(message){
@@ -941,7 +955,7 @@ window.appointmentWidget = {
 			988,989,992,994,995,996,997,999];
 		const code = Number(phone[3] + phone[4] + phone[5]);
 		const isValid = validCodes.includes(code) && phone.length === 16;
-		!isValid ? phoneInput.parentElement.classList.add("error") : phoneInput.parentElement.classList.remove("error");
+		!isValid ? phoneInput.parentElement.classList.add(styles["error"]) : phoneInput.parentElement.classList.remove(styles["error"]);
 		return isValid;
 	},
 
@@ -951,28 +965,86 @@ window.appointmentWidget = {
 						Пожалуйста, <a href="javascript:window.location.reload()">обновите страницу</a> 
 						для получения актуального графика и попробуйте ещё раз.`;
 
-		this.resultBlock.classList.add('active');
+		this.resultBlock.classList.add(styles['active']);
 
 		const resText = this.resultBlock.querySelector('p');
-		this.form.classList.add('off');
+		this.form.classList.add(styles['off']);
 		if (resText) {
 			if (success) {
 				resText.textContent = "Заявка успешно создана";
-				resText.classList.add('success');
+				resText.classList.add(styles['success']);
 				this.finalAnimations();
 			}
 			else{
 				resText.innerHTML = errorDesc;
-				resText.classList.add('error');
+				resText.classList.add(styles['error']);
 			}
 		}
 	},
 
 	finalAnimations: function(){
-		this.widgetBtn.classList.remove('active');
-		this.widgetBtn.classList.add('success');
+		this.widgetBtn.classList.remove(styles['active']);
+		this.widgetBtn.classList.add(styles['success']);
 		setTimeout(()=>{
-			this.form.classList.remove('active');
+			this.form.classList.remove(styles['active']);
 		}, 4000);
 	}
 }
+
+let html = `
+<div class="${styles['widget-wrapper']}" id="${settings.wrapperId}">
+    <div class="${styles['appointment-button-wrapper']} ${styles['loading']}" id="${settings.widgetBtnWrapId}">
+        <button id="${settings.widgetBtnId}"></button>
+        <div class="${styles['appointment-loader']}">
+            <div class="${styles['wBall']}" id="${styles['wBall_1']}"><div class="${styles['wInnerBall']}"></div></div>
+            <div class="${styles['wBall']}" id="${styles['wBall_2']}"><div class="${styles['wInnerBall']}"></div></div>
+            <div class="${styles['wBall']}" id="${styles['wBall_3']}"><div class="${styles['wInnerBall']}"></div></div>
+            <div class="${styles['wBall']}" id="${styles['wBall_4']}"><div class="${styles['wInnerBall']}"></div></div>
+            <div class="${styles['wBall']}" id="${styles['wBall_5']}"><div class="${styles['wInnerBall']}"></div></div>
+        </div>
+    </div>
+
+    <form id="${settings.formId}" class="${styles['appointment-form']}">
+`
+for(const key in settings.selectionNodes)
+{
+	if (settings.selectionNodes.hasOwnProperty(key)){
+		html = html+`
+			<div class="${styles['selection-block']} ${key===settings.dataKeys.clinicsKey ? '' : styles['hidden']}" id="${key}_block">
+				<p class="${styles['selection-item-selected']}" id="${key}_selected">${settings.defaultText[key]}</p>
+				<ul class="${styles['appointment-form_head_list']} ${styles['selection-item-list']}" id="${key}_list"></ul>
+				<input type="hidden" name="${key}" id="${key}_value">
+			</div>
+		`;
+	}
+}
+for(const key in settings.textBlocks)
+{
+	if (settings.textBlocks.hasOwnProperty(key)){
+		html = html+`<label class="${styles['appointment-form_input-wrapper']}"><${settings.textBlocks[key]["tag"]}`;
+		for(const attr in settings.textBlocks[key])
+		{
+			if (settings.textBlocks[key].hasOwnProperty(attr) && attr !== "tag"){
+				html = html+` т
+					${attr}="${settings.textBlocks[key][attr]}"	
+				`;
+			}
+		}
+		html = html+`></${settings.textBlocks[key]["tag"]}></label>`;
+	}
+}
+
+html = html + `<p id="${settings.messageNodeId}"></p>
+
+        <div class="${styles['appointment-form_submit-wrapper']}">
+            <button type="submit" id="${settings.submitBtnId}" class="${styles['appointment-form_button']}">Записаться на приём</button>
+        </div>
+
+        <div id="${settings.appResultBlockId}"><p></p></div>
+    </form>
+</div> 
+`;
+
+document.getElementById("appointment-widget-root").innerHTML = html;
+
+window.appointmentWidget.init(settings);

@@ -10,8 +10,8 @@ else
     //options
     $useServices                    = "Y";
     $selectDoctorBeforeService      = "Y";
-    $useTimeSteps                   = "N";
-    $timeStepDuration               = 15;   //minutes
+    $useTimeSteps                   = "N";  //use timeSteps only for services with duration>=30 minutes
+    $timeStepDurationMinutes        = 15;   //minutes
     $strictCheckingOfRelations      = "Y";  //strict verification of the binding of employees to the clinic and specializations to the clinic
     $showDoctorsWithoutDepartment   = "Y";
     //endOptions
@@ -21,38 +21,39 @@ else
     $ajaxPath = implode("/", $ajaxPath);
     $ajaxPath = $ajaxPath[0] === "/" ? $ajaxPath : "/" . $ajaxPath;
 
-    $styleRealPath = realpath(__DIR__.'/assets/css/style.css');
-    $styleHref = substr($styleRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
-    $styleHref = $styleHref[0] === DIRECTORY_SEPARATOR ? $styleHref : DIRECTORY_SEPARATOR . $styleHref;
+    $styleRealPath  = realpath(__DIR__.'/assets/css/style.css');
+    $styleHref      = substr($styleRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
+    $styleHref      = $styleHref[0] === DIRECTORY_SEPARATOR ? $styleHref : DIRECTORY_SEPARATOR . $styleHref;
 
     $scriptRealPath = realpath(__DIR__.'/assets/js/script.js');
-    $scriptSrc = substr($scriptRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
-    $scriptSrc = $scriptSrc[0] === DIRECTORY_SEPARATOR ? $scriptSrc : DIRECTORY_SEPARATOR . $scriptSrc;
+    $scriptSrc      = substr($scriptRealPath, strlen($_SERVER['DOCUMENT_ROOT']));
+    $scriptSrc      = $scriptSrc[0] === DIRECTORY_SEPARATOR ? $scriptSrc : DIRECTORY_SEPARATOR . $scriptSrc;
 
-    $wrapperId = "appointment-widget-wrapper";
-    $widgetBtnWrapId = "appointment-button-wrapper";
-    $widgetBtnId = "appointment-button";
-    $formId = 'appointment-form';
-    $messageNodeId = 'appointment-form-message';
-    $submitBtnId = "appointment-form-button";
-    $appResultBlockId = "appointment-result-block";
+    $wrapperId          = "appointment-widget-wrapper";
+    $widgetBtnWrapId    = "appointment-button-wrapper";
+    $widgetBtnId        = "appointment-button";
+    $formId             = 'appointment-form';
+    $messageNodeId      = 'appointment-form-message';
+    $submitBtnId        = "appointment-form-button";
+    $appResultBlockId   = "appointment-result-block";
 
-    $clinicsKey = "FILIAL";
+    $clinicsKey     = "FILIAL";
     $specialtiesKey = "SPECIALTY";
-    $servicesKey = "SERVICE";
-    $employeesKey = "DOCTOR";
-    $scheduleKey = "DATE_TIME";
+    $servicesKey    = "SERVICE";
+    $employeesKey   = "DOCTOR";
+    $scheduleKey    = "DATE_TIME";
 
     $selectionBlocks = [
-        $clinicsKey => "Выберите клинику",
+        $clinicsKey     => "Выберите клинику",
         $specialtiesKey => "Выберите специализацию",
     ];
-    if ($selectDoctorBeforeService === "Y"){
+    if ($selectDoctorBeforeService === "Y")
+    {
         $selectionBlocks[$employeesKey] = "Выберите врача";
-        $selectionBlocks[$servicesKey] = "Выберите услугу";
+        $selectionBlocks[$servicesKey]  = "Выберите услугу";
     }
     else{
-        $selectionBlocks[$servicesKey] = "Выберите услугу";
+        $selectionBlocks[$servicesKey]  = "Выберите услугу";
         $selectionBlocks[$employeesKey] = "Выберите врача";
     }
     $selectionBlocks[$scheduleKey] = "Выберите время";
@@ -107,8 +108,8 @@ else
 
 <script>
     const selectionNodes = {};
-    const textNodes = {};
-    const defaultText = {};
+    const textNodes      = {};
+    const defaultText    = {};
 </script>
 
 <div class="widget-wrapper" id="<?=$wrapperId?>">
@@ -173,7 +174,7 @@ else
                 "useTimeSteps": '<?=$useTimeSteps?>',
                 "strictCheckingOfRelations": '<?=$strictCheckingOfRelations?>',
                 "showDoctorsWithoutDepartment": '<?=$showDoctorsWithoutDepartment?>',
-                "timeStepDuration": '<?=$timeStepDuration?>',
+                "timeStepDurationMinutes": '<?=$timeStepDurationMinutes?>',
                 "ajaxPath": '<?=$ajaxPath?>',
                 "widgetBtnWrapId": '<?=$widgetBtnWrapId?>',
                 "wrapperId": "<?=$wrapperId?>",

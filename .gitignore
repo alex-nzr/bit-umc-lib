@@ -1,6 +1,18 @@
-/.idea/
+# dependencies
+*/**/node_modules/
 /vendor/
+
+# production
+*/**/build/
+*/**/dist/
+
+# misc
+/.idea/
 /docs/
-/tasks.xlsx
 /1cExtension/
 */**/log.txt
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
