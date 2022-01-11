@@ -257,6 +257,19 @@ body{
 	opacity: 1;
 }
 
+.widget-wrapper  .appointment-info-message{
+	padding-top: 10px;
+	font-size: 12px;
+	text-align: center;
+	color: #fff;
+	user-select: none;
+}
+.widget-wrapper  .appointment-info-message a{
+	color: #7fffd4;
+	border-bottom: 1px solid #7fffd4;
+	white-space: nowrap;
+}
+
 @keyframes rotating {
 	from{
 		transform: translate(-50%, -50%) rotate(0); 
@@ -296,7 +309,7 @@ body{
 	line-height: 1.3;
 }
 .widget-wrapper #appointment-result-block p.success{
-	font-size: 20px;
+	font-size: 13px;
 }
 .widget-wrapper #appointment-result-block p.success:before{
 	content:'';

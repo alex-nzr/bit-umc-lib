@@ -1,3 +1,4 @@
+
 <?php
 
 if ( !is_file(realpath(__DIR__ . '/../../vendor/autoload.php')) 
@@ -13,7 +14,8 @@ else
     $useTimeSteps                   = "N";  //use timeSteps only for services with duration>=30 minutes
     $timeStepDurationMinutes        = 15;   //minutes
     $strictCheckingOfRelations      = "Y";  //strict verification of the binding of employees to the clinic and specializations to the clinic
-    $showDoctorsWithoutDepartment   = "Y";
+    $showDoctorsWithoutDepartment   = "Y";  //show doctors and specialties with empty department
+    $privacyPageLink = "javascript: void(0)";
     //endOptions
 
     $ajaxPath = substr(realpath(__DIR__.'/ajax/ajax.php'), strlen($_SERVER['DOCUMENT_ROOT']));
@@ -73,7 +75,7 @@ else
             "id" => "appointment-form-middleName",
             "maxlength" => "30",
             "class" => "appointment-form_input",
-            "name" => "surname",
+            "name" => "middleName",
         ],
         [
             "type" => "text",
@@ -81,7 +83,7 @@ else
             "id" => "appointment-form-surname",
             "maxlength" => "30",
             "class" => "appointment-form_input",
-            "name" => "middleName",
+            "name" => "surname",
         ],
         [
             "type" => "tel",
@@ -162,6 +164,10 @@ else
         <div class="appointment-form_submit-wrapper">
             <button type="submit" id="<?=$submitBtnId?>" class="appointment-form_button">Записаться на приём</button>
         </div>
+
+        <p class="appointment-info-message">
+            Отправляя данные, вы соглашаетесь с <a href="<?=$privacyPageLink?>">политикой конфиденциальности</a> сайта
+        </p>
 
         <div id="<?=$appResultBlockId?>"><p></p></div>
     </form>

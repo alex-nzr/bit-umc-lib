@@ -76,6 +76,11 @@ Success response data(json)
                 "name": "Иванова Ксения Николаевна"
                 "relation": "Сестра"
             },
+            {
+                //uid can be undefined if relative is not in Catalog.Clients
+                "name": "Ахмин Петр Николаевич"
+                "relation": "Брат"
+            },
         ]
     }
 ]
@@ -288,10 +293,23 @@ Success response data(json)
         "isAnalysis": false,
         "isMedicalCheck": false,
         "VAT": "20%",
-        "price": "300"
+        "prices": {
+            "4c68deb4-22c3-11df-8618-002618dcef2c": {
+                "priceList": "Прейскурант ДМС",
+                "price": "270"
+            }
+            "f679444a-22b7-11df-8618-002618dcef2c": {
+                "priceList": "Основной прейскурант",
+                "price": "300"
+            }
+            "66abf7b4-2ff9-11df-8625-002618dcef2c": {
+                "priceList": "Основной прейскурант",
+                "price": "300"
+            }
+        }
     },
     "22d1b485-b34b-11de-8171-001583078ee5": {
-        "name": "Подбор очков сложной коррекции ",
+        "name": "Подбор очков сложной коррекции",
         "typeOfItem": "Услуга",
         "duration": 3600,
         "specialty": "Офтальмология",

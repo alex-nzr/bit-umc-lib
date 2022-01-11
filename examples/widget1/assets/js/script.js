@@ -2,6 +2,8 @@
 
 window.appointmentWidget = {
 	init: async function(params){
+		this.initParams = params;
+
 		this.useServices 					= (params.useServices === "Y");
 		this.selectDoctorBeforeService 		= (params.selectDoctorBeforeService === "Y");
 		this.useTimeSteps 					= (params.useTimeSteps === "Y");
@@ -32,7 +34,11 @@ window.appointmentWidget = {
 			schedule: []
 		}
 		this.eventHandlersAdded = {}
-		this.requiredInputs = [];//not used now, because checking goes by this.filledInputs
+
+		if (!this.isReloading){
+			this.requiredInputs = [];//not used now, because checking goes by this.filledInputs
+		}
+		
 		this.filledInputs = {
 			[this.dataKeys.clinicsKey]: {
 				clinicUid: false,
@@ -57,12 +63,12 @@ window.appointmentWidget = {
 				timeEnd: false,
 			},
 			textValues: {
-				name: false,
-				surname: false,
-				middleName: false,
-				phone: false,
-				address: false,
-				comment: false,
+				name: 		!this.isReloading ? false: this.filledInputs.textValues.name,
+				surname: 	!this.isReloading ? false: this.filledInputs.textValues.surname,
+				middleName: !this.isReloading ? false: this.filledInputs.textValues.middleName,
+				phone: 		!this.isReloading ? false: this.filledInputs.textValues.phone,
+				address: 	!this.isReloading ? false: this.filledInputs.textValues.address,
+				comment: 	false,
 			},
 		}
 		this.defaultText = params.defaultText;
@@ -75,10 +81,12 @@ window.appointmentWidget = {
 		this.submitBtn = document.getElementById(params.submitBtnId);
 		this.resultBlock = document.getElementById(params.appResultBlockId);
 
-		this.initForm(params.formId);
-		this.initSelectionNodes(params.selectionNodes);
-		this.initTextNodes(params.textNodes);
-		this.addPhoneMasks();
+		if (!this.isReloading){
+			this.initForm(params.formId);
+			this.initSelectionNodes(params.selectionNodes);
+			this.initTextNodes(params.textNodes);
+			this.addPhoneMasks();
+		}
 		await this.start();
 	},
 
@@ -136,8 +144,9 @@ window.appointmentWidget = {
 		const loaded = await this.loadData();
 		if (loaded){
 			this.startRender();
-			this.activateWidgetButton();
+			!this.isReloading ? this.activateWidgetButton() : void(0);
 		}else{
+			this.widgetBtnWrap.classList.add('hidden');
 			this.errorMessage("Loading data error")
 		}
 	},
@@ -290,13 +299,15 @@ window.appointmentWidget = {
 		{
 			if (this.selectionNodes.hasOwnProperty(this.dataKeys.clinicsKey))
 			{
+				const clinicsList = this.selectionNodes[this.dataKeys.clinicsKey].listNode;
+				clinicsList.innerHTML = '';
 				this.data.clinics.forEach((clinic) => {
 					const li = document.createElement('li');
 					if (clinic.uid) {
 						li.dataset.uid = clinic.uid;
 						li.dataset.name = clinic.name;
 						li.textContent = clinic.name;
-						this.selectionNodes[this.dataKeys.clinicsKey].listNode.append(li);
+						clinicsList.append(li);
 					}else{
 						this.errorMessage(`${clinic.name} was excluded from render, because it hasn't uid`);
 					}
@@ -384,8 +395,14 @@ window.appointmentWidget = {
 
 					if (renderCondition)
 					{
+						const selectedClinic = this.filledInputs[this.dataKeys.clinicsKey].clinicUid;
 						const li = document.createElement('li');
-						const price = Number((this.data.services[uid]['price']).replace(/\s+/g, ''));
+
+						let price = 0;
+						if (this.data.services[uid]['prices'].hasOwnProperty(selectedClinic)){
+							price = Number((this.data.services[uid]['prices'][selectedClinic]['price']).replace(/\s+/g, ''));
+						}
+
 						if (this.data.services.hasOwnProperty(uid)){
 							li.innerHTML = `<p>
 												${this.data.services[uid].name}<br>
@@ -639,7 +656,7 @@ window.appointmentWidget = {
 		}
 		for (let item of items) {
 			item.addEventListener('click', (e)=>{
-				this.selectionNodes[dataKey].listNode.classList.toggle('active');
+				this.selectionNodes[dataKey].listNode.classList.remove('active');
 				this.selectionNodes[dataKey].selectedNode.innerHTML = `<span>${e.currentTarget.textContent}</span>`;
 				this.changeStep(dataKey, e.currentTarget);
 				this.activateBlocks();
@@ -703,6 +720,7 @@ window.appointmentWidget = {
 
 		if (this.checkRequiredFields())
 		{
+			this.form.style.pointerEvents = 'none';
 			this.submitBtn.classList.add('loading');
 			let orderData = { 'action': 'CreateOrderUnauthorized',  ...this.filledInputs.textValues};
 			for (let key in this.selectionNodes)
@@ -745,7 +763,6 @@ window.appointmentWidget = {
 				}
 				else if(result.success)
 				{
-					this.submitBtn.classList.remove('loading');
 					this.finalizingWidget(true);
 				}
 				else
@@ -945,11 +962,14 @@ window.appointmentWidget = {
 		return isValid;
 	},
 
-	finalizingWidget: function(success){
+	finalizingWidget: function(success)
+	{
+		this.submitBtn.classList.remove('loading');
+
 		let errorDesc = `К сожалению, создание заявки не удалось.\n 
 						Возможно, выбранное вами время приёма уже было занято кем-то другим. 
-						Пожалуйста, <a href="javascript:window.location.reload()">обновите страницу</a> 
-						для получения актуального графика и попробуйте ещё раз.`;
+						Пожалуйста, <a href="javascript:window.appointmentWidget.reload()">обновите расписание</a> 
+						и попробуйте ещё раз.`;
 
 		this.resultBlock.classList.add('active');
 
@@ -957,7 +977,11 @@ window.appointmentWidget = {
 		this.form.classList.add('off');
 		if (resText) {
 			if (success) {
-				resText.textContent = "Заявка успешно создана";
+				const date = this.convertDateToDisplay(this.filledInputs[this.dataKeys.scheduleKey].timeBegin, false);
+				const time = this.convertDateToDisplay(this.filledInputs[this.dataKeys.scheduleKey].timeBegin, true);
+				const doctor = this.filledInputs[this.dataKeys.employeesKey].doctorName;
+				resText.innerHTML = `Вы записаны на приём ${date} в ${time}.<br>Врач - ${doctor}` ;
+
 				resText.classList.add('success');
 				this.finalAnimations();
 			}
@@ -972,7 +996,21 @@ window.appointmentWidget = {
 		this.widgetBtn.classList.remove('active');
 		this.widgetBtn.classList.add('success');
 		setTimeout(()=>{
-			this.form.classList.remove('active');
+			this.reload();
 		}, 4000);
-	}
+	},
+
+	reload: function(){
+		this.form.classList.remove('active');
+		this.resultBlock.classList.remove('active');
+		this.widgetBtn.classList.remove('success');
+		this.form.style.pointerEvents = '';
+		this.form.classList.remove('off');
+		this.isReloading = true;
+
+		this.init(this.initParams).then(r => {
+			const clickEvent = new Event('click', {bubbles:false});
+			this.selectionNodes[this.dataKeys.clinicsKey].listNode.firstChild.dispatchEvent(clickEvent);
+		});
+	},
 }
