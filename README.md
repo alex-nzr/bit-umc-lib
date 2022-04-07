@@ -1,5 +1,5 @@
 ## **Warning!**
-**This project will no longer be updated and maintained. Fixing old bugs, as well as new functionality and new frontend samples are available in the [new version](https://github.com/alex-nzr/bit-umc-symfony-rest) of the integration developed with the Symfony framework**
+**This project will no longer be updated and maintained.**
 
 ## Installation
 
