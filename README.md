@@ -1,6 +1,9 @@
 ## **Warning!**
 **This was the first attempt to write an sdk for the bit-umc. Not supported and not recommended for use. This project will no longer be updated and maintained.**
 
+## **Info**
+**Integration written for a custom 1c extension. It doesn't work with typical web services.**
+
 ## Installation
 
 ### Install composer package
