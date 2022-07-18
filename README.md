@@ -1,5 +1,5 @@
 ## **Warning!**
-**This project will no longer be updated and maintained.**
+**This was the first attempt to write an sdk for the bit-umc. Not supported and not recommended for use. This project will no longer be updated and maintained.**
 
 ## Installation
 
